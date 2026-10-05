@@ -1,0 +1,28 @@
+{% assign locale = include.locale | default: site.locale %}
+{% comment %}
+  Based on minimal-mistakes-jekyll 4.28.1. Local delta: select the brand,
+  home and navigation by locale (also the cache key), with always-visible links.
+{% endcomment %}
+{% assign language = site.data.languages[locale] %}
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="site-nav"
+        aria-label="{{ site.data.ui-text[locale].primary_navigation }}">
+        <a class="site-title site-brand"
+          href="{{ language.home | relative_url }}">
+          {{ language.brand | escape_once | strip }}
+        </a>
+        <ul class="visible-links">
+          {%- for link in site.data.navigation[locale] -%}
+            <li class="masthead__menu-item">
+              <a href="{{ link.url | relative_url }}">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+      {% include site-controls.html locale=locale %}
+    </div>
+  </div>
+</div>

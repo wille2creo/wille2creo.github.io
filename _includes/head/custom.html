@@ -1,0 +1,20 @@
+<link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32"
+  href="{{ '/assets/favicon-32x32.png' | relative_url }}">
+<link rel="icon" type="image/png" sizes="16x16"
+  href="{{ '/assets/favicon-16x16.png' | relative_url }}">
+<link rel="apple-touch-icon" sizes="180x180"
+  href="{{ '/assets/apple-touch-icon.png' | relative_url }}">
+<meta id="theme-color-light" name="theme-color" content="#f5f1e8"
+  media="(prefers-color-scheme: light)">
+<meta id="theme-color-dark" name="theme-color" content="#151814"
+  media="(prefers-color-scheme: dark)">
+<script src="{{ '/assets/js/site-controls.js' | relative_url }}"></script>
+{% if site.search and page.layout != 'language-selector' %}
+  <script src="{{ '/assets/js/site-search.js' | relative_url }}" defer></script>
+{% endif %}
+{% if page.mathjax %}
+  <script src="{{ '/assets/js/mathjax-config.js' | relative_url }}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-svg.js"
+    defer></script>
+{% endif %}

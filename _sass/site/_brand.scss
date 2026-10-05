@@ -1,0 +1,24 @@
+// The wordmark has the same face and proportions at both display sizes.
+.site-brand,
+.site-nav a.site-brand {
+  font-family: "Alimama DaoLiTi", serif;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+html[lang="en"] .site-brand {
+  font-family: "Blog Brand EN", serif;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+}
+
+.greedy-nav .site-title {
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+
+html[lang="en"] .greedy-nav .site-title {
+  font-size: 1.3rem;
+}

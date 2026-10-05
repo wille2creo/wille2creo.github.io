@@ -1,0 +1,66 @@
+{% assign locale = include.locale | default: site.locale %}
+{% assign language = site.data.languages[locale] %}
+{% assign site_title = page.brand | default: language.brand | default: site.title %}
+<!-- begin _includes/seo.html -->
+{% comment %}
+  Based on minimal-mistakes-jekyll 4.28.1. Keep site-used metadata, omit
+  paginator title suffixes, and select brand/description by page locale.
+{% endcomment %}
+{%- assign title_separator = site.title_separator | default: '-' -%}
+
+{%- assign page_title = page.title | default: site_title | replace: '|', '&#124;' -%}
+{%- if page_title contains site_title -%}
+  {%- assign seo_title = page_title | replace: '|', '&#124;' -%}
+{%- else -%}
+  {%- assign seo_title = page_title | append: " " | append: title_separator | append: " " | append: site_title | replace: '|', '&#124;' -%}
+{%- endif -%}
+
+{%- assign page_title = page_title | markdownify | strip_html | strip_newlines | escape_once -%}
+{%- assign seo_title  = seo_title  | markdownify | strip_html | strip_newlines | escape_once -%}
+
+{%- assign canonical_url = page.canonical_url | default: page.url | replace: "/index.html", "/" | absolute_url %}
+
+{%- assign seo_description = page.description | default: page.excerpt | default: language.description | default: site.description -%}
+{%- if seo_description -%}
+  {%- assign seo_description = seo_description | markdownify | strip_html | newline_to_br | strip_newlines | replace: '<br />', ' ' | escape_once | strip -%}
+{%- endif -%}
+
+{%- if page.date -%}
+  {%- assign og_type = "article" -%}
+{%- else -%}
+  {%- assign og_type = "website" -%}
+{%- endif -%}
+
+<title>{{ seo_title }}</title>
+<meta name="description" content="{{ seo_description }}">
+
+<meta property="og:type" content="{{ og_type }}">
+<meta property="og:locale" content="{{ language.og_locale }}">
+<meta property="og:site_name" content="{{ site_title | escape_once | strip }}">
+<meta property="og:title" content="{{ page_title }}">
+<meta property="og:url" content="{{ canonical_url }}">
+
+<meta property="og:description" content="{{ seo_description }}">
+
+{% if page.date %}
+  <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+{% endif %}
+
+{% if og_type == "article" and page.last_modified_at %}
+  <meta property="article:modified_time" content="{{ page.last_modified_at | date_to_xmlschema }}">
+{% endif %}
+
+<link rel="canonical" href="{{ canonical_url }}">
+
+{% if paginator.previous_page %}
+  <link rel="prev" href="{{ paginator.previous_page_path | absolute_url }}">
+{% endif %}
+{% if paginator.next_page %}
+  <link rel="next" href="{{ paginator.next_page_path | absolute_url }}">
+{% endif %}
+
+{% if page.url == '/' %}
+  {% include schema.html %}
+{% endif %}
+
+<!-- end _includes/seo.html -->

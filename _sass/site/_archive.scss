@@ -1,0 +1,112 @@
+.archive__subtitle {
+  color: var(--site-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0;
+}
+
+.layout--home .archive__subtitle {
+  display: none;
+}
+
+.layout--home .page__title {
+  display: none;
+}
+
+.post-list-anchor {
+  scroll-margin-top: 5rem;
+}
+
+.archive__item-title {
+  margin-top: 1.8rem;
+  font-family: var(--font-serif);
+  font-weight: 500;
+}
+
+.archive__item-title a,
+.archive__item-title a:visited {
+  color: var(--site-fern);
+  text-decoration-color: var(--site-link-line);
+}
+
+.layout--home .archive__item-title a {
+  text-decoration: none;
+}
+
+.archive__item-title a:hover,
+.archive__item-title a:focus {
+  color: var(--site-deep-fern);
+  text-decoration-color: var(--site-link-hover-line);
+}
+
+.layout--home .archive__item-title a:hover,
+.layout--home .archive__item-title a:focus {
+  text-decoration: none;
+}
+
+.archive__item-excerpt {
+  max-width: 58rem;
+  color: var(--site-ink);
+}
+
+.archive-year {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  column-gap: 1.5rem;
+  padding: 1rem 0 1.35rem;
+  border-top: 1px solid var(--site-line);
+}
+
+.archive-year__title {
+  margin: 0.35rem 0 0;
+  color: var(--site-moss);
+  font-family: var(--font-serif);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.archive-year__list {
+  grid-column: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.archive-year__item {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  column-gap: 1rem;
+  align-items: baseline;
+  padding: 0.32rem 0;
+}
+
+.archive-year__item time {
+  color: var(--site-muted);
+  font-family: var(--font-serif);
+  font-size: 0.72rem;
+}
+
+.archive-year__item a,
+.archive-year__item a:visited {
+  color: var(--site-ink);
+  font-family: var(--font-serif);
+  font-size: 0.94rem;
+  line-height: 1.55;
+  text-decoration-color: transparent;
+}
+
+.archive-year__item a:hover,
+.archive-year__item a:focus {
+  color: var(--site-fern);
+  text-decoration-color: var(--site-link-line);
+}
+
+@media (max-width: 48em) {
+  .archive-year {
+    grid-template-columns: 1fr;
+    row-gap: 0.25rem;
+  }
+
+  .archive-year__list {
+    grid-column: 1;
+  }
+}

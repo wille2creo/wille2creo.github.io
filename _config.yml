@@ -1,0 +1,68 @@
+theme: minimal-mistakes-jekyll
+minimal_mistakes_skin: contrast
+
+url: https://wille2creo.github.io
+title: 震之
+description: >
+  知其黑守其白
+locale: zh-CN
+lang: zh-CN
+author: wille2creo
+
+repository: wille2creo/wille2creo.github.io
+permalink: /:year/:month/:day/:title/
+
+pagination:
+  enabled: true
+  per_page: 8
+  permalink: /p/:num/
+  sort_field: date
+  sort_reverse: true
+  title: ":title"
+  trail:
+    before: 2
+    after: 2
+
+markdown: kramdown
+highlighter: rouge
+search: true
+search_provider: local
+breadcrumbs: false
+words_per_minute: 200
+future: true
+atom_feed:
+  hide: true
+
+exclude:
+  - /.playwright-cli
+  - AGENTS.md
+  - Gemfile
+  - Gemfile.lock
+  - LICENSE
+  - README.md
+  - assets/fonts/README.md
+  - Makefile
+  - /output
+  - /vendor
+
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      locale: zh-CN
+      layout: single
+      classes: moderate
+      author_profile: false
+      read_time: false
+      comments: false
+      share: false
+      related: false
+      toc: true
+      toc_sticky: true
+
+plugins:
+  - jekyll-feed
+  - jekyll-include-cache
+  - jekyll-paginate-v2
+  - jekyll-sitemap

@@ -1,0 +1,21 @@
+zh-CN:
+  label: 中
+  language_name: 中文
+  og_locale: zh_CN
+  brand: 震之
+  home: /zh/
+  description: 知其黑守其白
+  switch_to: en
+  kicker: 以明
+  date_format: "%Y年%-m月%-d日"
+en:
+  label: EN
+  language_name: English
+  og_locale: en_US
+  brand: Übersicht
+  home: /en/
+  description: Wo Es war, soll Ich werden
+  intro: Wo Es war, soll <strong>Ich</strong> werden
+  switch_to: zh-CN
+  kicker: amor fati
+  date_format: "%B %-d, %Y"

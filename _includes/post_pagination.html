@@ -1,0 +1,36 @@
+{% comment %}
+  Keep previous/next navigation within the current language's independent posts.
+{% endcomment %}
+{% assign locale = include.locale | default: site.locale %}
+{% assign posts = site.posts | where: "locale", locale | reverse %}
+{% for post in posts %}
+  {% if post.id == page.id %}
+    {% assign previous_index = forloop.index0 | minus: 1 %}
+    {% assign next_index = forloop.index0 | plus: 1 %}
+    {% unless forloop.first %}{% assign previous_post = posts[previous_index] %}{% endunless %}
+    {% assign next_post = posts[next_index] %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+{% if previous_post or next_post %}
+  <nav class="pagination">
+    {% assign neighbors = "previous,next" | split: "," %}
+    {% for direction in neighbors %}
+      {% if direction == 'previous' %}
+        {% assign neighbor = previous_post %}
+        {% assign label = site.data.ui-text[locale].pagination_previous %}
+      {% else %}
+        {% assign neighbor = next_post %}
+        {% assign label = site.data.ui-text[locale].pagination_next %}
+      {% endif %}
+      {% if neighbor %}
+        <a href="{{ neighbor.url | relative_url }}"
+          class="pagination--pager"
+          title="{{ neighbor.title | escape }}">{{ label }}</a>
+      {% else %}
+        <span class="pagination--pager disabled"
+          aria-disabled="true">{{ label }}</span>
+      {% endif %}
+    {% endfor %}
+  </nav>
+{% endif %}

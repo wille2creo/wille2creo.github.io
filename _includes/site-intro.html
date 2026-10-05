@@ -1,0 +1,29 @@
+{% assign language = site.data.languages[page.locale] %}
+{% unless paginator.page > 1 %}
+<section class="site-intro" aria-labelledby="site-intro-title">
+  <div class="site-intro__body">
+    <p class="site-intro__kicker">{{ language.kicker }}</p>
+    <h1 id="site-intro-title">
+      <span class="site-brand">{{ language.brand }}</span>
+      {% if page.locale == 'zh-CN' %}
+        <svg class="site-intro__hexagram" aria-hidden="true"
+          viewBox="0 0 24 34" focusable="false">
+          <path d="M0 2h9m6 0h9M0 8h9m6 0h9M0 14h24
+            M0 20h9m6 0h9M0 26h9m6 0h9M0 32h24"
+            fill="none" stroke="currentColor" stroke-width="2.5" />
+        </svg>
+      {% endif %}
+    </h1>
+    <p class="site-intro__dek">
+      {{ language.intro | default: language.description }}
+    </p>
+  </div>
+  <p class="site-intro__seal" aria-hidden="true">
+    <span>बो</span>
+    <span>धि</span>
+    <span>स</span>
+    <span>त्त्व</span>
+  </p>
+</section>
+{% endunless %}
+<div id="posts" class="post-list-anchor" aria-hidden="true"></div>

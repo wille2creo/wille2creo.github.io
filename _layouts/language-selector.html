@@ -1,0 +1,17 @@
+---
+---
+<!doctype html>
+<html lang="{{ page.locale }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% include seo.html locale=page.locale %}
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+    {% include head/custom.html %}
+  </head>
+  <body class="layout--language-selector">
+    <main id="main">
+      {{ content }}
+    </main>
+  </body>
+</html>

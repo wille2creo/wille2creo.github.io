@@ -1,0 +1,44 @@
+{% comment %}
+  Based on minimal-mistakes-jekyll 4.28.1. Preserve the configured page trail,
+  anchor links to the post list, and render disabled controls as spans.
+{% endcomment %}
+{% assign locale = include.locale | default: site.locale %}
+{% assign labels = site.data.ui-text[locale] %}
+<nav class="pagination" aria-label="{{ labels.pagination_label }}">
+  <ul>
+    {% if paginator.previous_page %}
+      <li><a href="{{ paginator.previous_page_path | remove: 'index.html' | relative_url }}#posts" aria-label="{{ labels.pagination_previous_page }}">{{ labels.pagination_previous }}</a></li>
+    {% else %}
+      <li><span class="disabled" aria-disabled="true" aria-label="{{ labels.pagination_previous_page }}">{{ labels.pagination_previous }}</span></li>
+    {% endif %}
+
+    {% if paginator.page_trail.first.num > 1 %}
+      <li><a href="{{ paginator.first_page_path | relative_url }}#posts">1</a></li>
+    {% endif %}
+    {% if paginator.page_trail.first.num > 2 %}
+      <li><span class="disabled" aria-hidden="true">&hellip;</span></li>
+    {% endif %}
+
+    {% for trail in paginator.page_trail %}
+      {% if paginator.page == trail.num %}
+        <li><span class="disabled current" aria-current="page">{{ trail.num }}</span></li>
+      {% else %}
+        <li><a href="{{ trail.path | remove: 'index.html' | relative_url }}#posts">{{ trail.num }}</a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% assign penultimate_page = paginator.total_pages | minus: 1 %}
+    {% if paginator.page_trail.last.num < penultimate_page %}
+      <li><span class="disabled" aria-hidden="true">&hellip;</span></li>
+    {% endif %}
+    {% if paginator.page_trail.last.num < paginator.total_pages %}
+      <li><a href="{{ paginator.last_page_path | remove: 'index.html' | relative_url }}#posts">{{ paginator.total_pages }}</a></li>
+    {% endif %}
+
+    {% if paginator.next_page %}
+      <li><a href="{{ paginator.next_page_path | remove: 'index.html' | relative_url }}#posts" aria-label="{{ labels.pagination_next_page }}">{{ labels.pagination_next }}</a></li>
+    {% else %}
+      <li><span class="disabled" aria-disabled="true" aria-label="{{ labels.pagination_next_page }}">{{ labels.pagination_next }}</span></li>
+    {% endif %}
+  </ul>
+</nav>

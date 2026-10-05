@@ -1,0 +1,10 @@
+{% comment %}
+  Based on minimal-mistakes-jekyll 4.28.1. Format the date in the page's language.
+{% endcomment %}
+{% assign date = page.last_modified_at | default: page.date %}
+{% if date %}
+  {% assign date_format = site.data.languages[page.locale].date_format %}
+  {% assign date_class = 'dt-published' %}
+  {% if page.last_modified_at %}{% assign date_class = 'dt-updated' %}{% endif %}
+  <p class="page__date"><strong><i class="fas fa-fw fa-calendar-alt" aria-hidden="true"></i></strong> <time class="{{ date_class }}" datetime="{{ date | date_to_xmlschema }}">{{ date | date: date_format }}</time></p>
+{% endif %}

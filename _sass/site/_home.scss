@@ -1,3 +1,8 @@
+.layout--home .archive {
+  float: none;
+  margin-inline: auto;
+}
+
 .site-intro {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 8rem;

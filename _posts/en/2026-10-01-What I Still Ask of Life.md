@@ -2,10 +2,10 @@
 title: What I Still Ask of Life
 locale: en
 excerpt: >-
-  On reading Wittgenstein
+  A way of living can become intelligible before it becomes one’s own
 ---
 
-> In fact it is already a seed of good originality not to want to be what you are not.  
+> In fact it is already a seed of good originality not to want to be what you are not.<br />
 > —Wittgenstein, *Culture and Value*
 
 I have found Wittgenstein difficult in a way that is not quite obscurity. Often a sentence is plain enough; what is difficult is to see why so much turns on it. Knowing how to play chess does not require its rules to pass through the mind whenever one says “chess.” A picture does not, by itself, tell us how to apply it. Agreement comes readily. Recognising the hold of the picture being questioned takes longer.
@@ -20,17 +20,17 @@ The later philosophy changes the question. Rather than asking every expression t
 
 This matters to ethical speech. An apology need not merely report an inward feeling. Someone is addressed; something is acknowledged or evaded; the words may be followed by an attempt at repair. Their seriousness cannot be detached from those circumstances. Looking for it solely behind the words would miss what is happening between the people who speak them.
 
-Neither does ordinary practice settle what is right. Evasion and cruelty have familiar ways of speaking too. Returning to the ordinary calls for closer discrimination, not deference to whatever happens to be customary. What I find implicitly ethical in this attention is its refusal to let an impressive formulation do the work of looking. The comparison of philosophical methods to therapies suggests the same patience with particular entanglements. It offers no general cure for living, and suffering is not necessarily a conceptual mistake. (*Philosophical Investigations* §133)
+Nor does ordinary practice settle what is right. Evasion and cruelty have familiar ways of speaking too. Returning to the ordinary calls for closer discrimination, not deference to whatever happens to be customary. What I find implicitly ethical in this attention is its refusal to let an impressive formulation do the work of looking. The comparison of philosophical methods to therapies suggests the same patience with particular entanglements. It offers no general cure for living, and suffering is not necessarily a conceptual mistake. (*Philosophical Investigations* §133)
 
 The question becomes what such clarity asks of the person seeking it. A remark in *Culture and Value* brings this into focus without turning it into a doctrine. Wittgenstein distinguishes even the finest taste from creative power. Sensitivity receives and discriminates; it does not thereby make anything. He then admits uncertainty about himself: he knows that he has taste, but cannot clearly tell whether he has originality. Perhaps one sees what one possesses, he suggests, rather than what one is.
 
 This passage touched me. Its conclusion is almost disconcertingly modest: do not want to be what you are not. One expects originality to require an addition—a distinctive voice, an invention, something unmistakably one’s own. Wittgenstein begins with the falsification that can be refused.
 
-Honesty cannot substitute for making the work, any more than appreciation can. But neither is originality secured by assuming an original-looking manner. The passage leaves creative ability uncertain while making the next question less obscure: not how to certify one’s originality, but how to begin without pretence. Even its final admission, that others have said all this better, belongs to the thought. A remark about originality declines to make novelty its claim upon us.
+Honesty cannot do the work of creation, any more than appreciation can. But neither is originality secured by assuming an original-looking manner. The passage leaves creative ability uncertain while making the next question less obscure: not how to certify one’s originality, but how to begin without pretence. Even its final admission, that others have said all this better, belongs to the thought. A remark about originality declines to make novelty its claim upon us.
 
 That restraint matters when the words we admire describe a way of living. Another passage, from the wartime notebooks, moved me more directly:
 
-> One should enjoy the good hours of life gratefully, as a blessing, and otherwise feel indifferent toward life.  
+> One should enjoy the good hours of life gratefully, as a blessing, and otherwise feel indifferent toward life.<br />
 > —Wittgenstein, *Private Notebooks*
 
 I also saw quite plainly that I did not inhabit the attitude it expressed.

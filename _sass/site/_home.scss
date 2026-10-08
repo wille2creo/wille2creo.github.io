@@ -212,3 +212,23 @@ html[lang="en"] .site-intro h1 {
 html[lang="en"] .site-intro__dek {
   font-size: clamp(1rem, 2.5vw, 1.04rem);
 }
+
+// Opt-in previews belong to the home list, below the unchanged frontispiece.
+.layout--home .home-artwork-post__preview {
+  width: min(100%, 11rem);
+  margin-block: 0.25rem 0.75rem;
+}
+
+@media (min-width: 48.0625em) {
+  .layout--home .home-artwork-post {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) clamp(8rem, 17vw, 10rem);
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .layout--home .home-artwork-post__preview {
+    width: 100%;
+    margin: 0;
+  }
+}

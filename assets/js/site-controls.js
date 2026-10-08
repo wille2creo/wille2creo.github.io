@@ -21,6 +21,9 @@
         'media', mode === resolved ? 'all' : 'not all'
       );
     }
+    document.querySelectorAll('source[data-artwork-dark]').forEach((source) => {
+      source.media = resolved === 'dark' ? 'all' : 'not all';
+    });
     const next = modes[(modes.indexOf(choice) + 1) % modes.length];
     document.querySelectorAll('[data-theme-switch]').forEach((button) => {
       const labels = {

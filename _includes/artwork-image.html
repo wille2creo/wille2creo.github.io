@@ -1,0 +1,10 @@
+<picture class="artwork-image">
+  {% if include.dark %}
+    <source data-artwork-dark media="(prefers-color-scheme: dark)"
+      srcset="{{ include.dark | relative_url | escape }}">
+  {% endif %}
+  <img src="{{ include.light | relative_url | escape }}"
+    alt="{{ include.alt | default: '' | escape }}"
+    width="{{ include.width }}" height="{{ include.height }}"
+    loading="lazy" decoding="async">
+</picture>

@@ -36,6 +36,7 @@ atom_feed:
 exclude:
   - /.playwright-cli
   - AGENTS.md
+  - ARTWORK.md
   - Gemfile
   - Gemfile.lock
   - LICENSE

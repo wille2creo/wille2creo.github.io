@@ -1,0 +1,8 @@
+{% assign preview = post.artwork.preview | default: post.artwork %}
+<div class="home-artwork-post">
+  {% include archive-single.html locale=include.locale type=include.type %}
+  <div class="home-artwork-post__preview" aria-hidden="true">
+    {% include artwork-image.html light=preview.light dark=preview.dark
+      width=preview.width height=preview.height %}
+  </div>
+</div>

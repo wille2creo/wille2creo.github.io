@@ -1,6 +1,17 @@
 ---
 title: Thunderstorm
 locale: en
+artwork:
+  home_preview: true
+  light: /assets/art/thunderstorm/plate.light.png
+  dark: /assets/art/thunderstorm/plate.dark.png
+  width: 1672
+  height: 941
+  preview:
+    light: /assets/art/thunderstorm/preview.light.webp
+    dark: /assets/art/thunderstorm/preview.dark.webp
+    width: 720
+    height: 406
 excerpt: >-
   The universe is vast; the TARDIS can always take off again
 ---
@@ -22,6 +33,13 @@ I do not yet understand much of the practice described here. But “do not go lo
 ### The Thunderstorm
 
 Jung has another image I am fond of. Certain problems are not resolved on their own logical terms; rather, as life acquires a new and stronger direction, they gradually lose their hold. Seen from a higher stage of personal development, the old, fierce conflicts resemble a thunderstorm in a valley, viewed from a mountaintop. But he immediately adds that, inwardly, we are the valley as well as the mountain. The storm has not vanished. We are still shaken and tormented by it, even as we can say: “I know that I suffer.”
+
+{% include artwork.html
+  src=page.artwork.light
+  dark=page.artwork.dark
+  alt="Watercolor: lightning over a rainy valley; green plants on the bank."
+  width=page.artwork.width height=page.artwork.height
+%}
 
 “To be in a fog without knowing it, and to know that one is in a fog—these are more than a thousand miles apart.”
 

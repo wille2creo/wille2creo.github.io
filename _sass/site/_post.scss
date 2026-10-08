@@ -76,3 +76,18 @@
   background: var(--site-surface);
   color: var(--site-deep-fern);
 }
+
+// Transparent pigment sits directly on the page's own paper.
+.page__content .artwork--plate {
+  display: block;
+  width: 100%;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 64em) {
+  .page__content .artwork--plate {
+    width: 106%;
+    margin-block: 1.75rem;
+    margin-inline-start: -6%;
+  }
+}

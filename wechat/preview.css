@@ -1,0 +1,30 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #eef0ed; color: #373a36; font: 14px/1.7 -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif; }
+a { color: #526557; text-underline-offset: 3px; }
+button, select { font: inherit; color: inherit; }
+button, .toolbar a { border: 1px solid #c7cdc6; padding: 7px 12px; background: #fff; cursor: pointer; text-decoration: none; }
+button:hover { background: #f1f4ef; }
+:focus-visible { outline: 2px solid #526557; outline-offset: 3px; }
+.toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 18px 28px; background: #fff; border-bottom: 1px solid #dde0db; }
+.identity { display: flex; gap: 18px; align-items: center; }
+.identity strong { font: 25px "Songti SC", SimSun, serif; letter-spacing: 4px; }
+.identity span { color: #6a706a; font-size: 12px; }
+nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+main { padding: 24px 12px 64px; }
+.instructions, .paste-check { max-width: 680px; margin: 0 auto 28px; }
+.instructions p { margin: 0 0 10px; }
+summary { cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+details[open] summary { margin-bottom: 14px; }
+details ol { padding-left: 22px; }
+details li { margin-bottom: 12px; }
+.assets span { display: block; color: #6a706a; font-size: 12px; }
+.paper { width: 390px; max-width: 100%; margin: 0 auto; background: #fff; }
+.paste-check { margin-top: 32px; }
+#paste-target { min-height: 180px; margin-top: 16px; background: white; border: 1px solid #c7cdc6; }
+@media (max-width: 480px) {
+  .toolbar { padding: 16px 12px; }
+  main { padding: 20px 0 40px; }
+  .instructions, .paste-check { margin-left: 16px; margin-right: 16px; }
+  nav { gap: 6px; }
+  button, .toolbar a { padding: 7px 9px; font-size: 12px; }
+}

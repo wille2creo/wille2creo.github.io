@@ -1,0 +1,52 @@
+/* Wenyan inlines these selectors. No fonts fetched, variables or pseudo-elements. */
+#wenyan {
+  background-color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.95;
+  letter-spacing: 0.5px;
+  padding: 28px 22px 56px;
+  text-align: left;
+  word-wrap: break-word;
+}
+#wenyan * { box-sizing: border-box; }
+#wenyan p { color: #373a36; margin: 0 0 25px; }
+#wenyan h1, #wenyan h2, #wenyan h3, #wenyan h4, #wenyan h5, #wenyan h6 {
+  font-family: "Songti SC", "STSong", "Noto Serif CJK SC", SimSun, serif;
+  color: #282e2b;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: 1px;
+  padding: 0;
+  text-align: left;
+}
+#wenyan h1 { font-size: 25px; margin: 46px 0 22px; }
+#wenyan h2 { font-size: 23px; margin: 46px 0 22px; }
+#wenyan h3 { font-size: 21px; margin: 42px 0 20px; }
+#wenyan h4 { font-size: 19px; margin: 36px 0 18px; }
+#wenyan h5, #wenyan h6 { font-size: 17px; margin: 32px 0 16px; }
+#wenyan .publication-header { margin: 0 0 40px; }
+#wenyan .publication-title { font-size: 30px; margin: 0 0 20px; letter-spacing: 2px; }
+#wenyan .publication-description {
+  font-size: 14px;
+  line-height: 1.9;
+  letter-spacing: 0.6px;
+  color: #6a706a;
+  margin: 0 0 22px;
+}
+#wenyan strong { color: #282e2b; font-weight: 600; }
+#wenyan em { font-style: italic; }
+#wenyan a { color: #526557; text-decoration: underline; word-wrap: break-word; }
+#wenyan blockquote { margin: 30px 0; padding: 0 0 0 16px; border-left: 2px solid #c7cdc6; }
+#wenyan blockquote p { font-size: 15px; color: #626960; line-height: 1.95; margin: 0 0 16px; }
+#wenyan cite { display: block; font-size: 12px; color: #747a72; font-style: normal; text-align: right; }
+#wenyan figure { display: block; margin: 32px 0; padding: 0; }
+#wenyan img { display: block; width: 100%; max-width: 100%; height: auto; margin: 0 auto; object-fit: contain; }
+#wenyan figcaption { font-size: 11px; color: #747a72; line-height: 1.7; letter-spacing: 0.2px; margin: 10px 0 0; text-align: left; }
+#wenyan ul, #wenyan ol { padding-left: 24px; margin: 24px 0; color: #373a36; }
+#wenyan li { margin: 8px 0; }
+#wenyan hr { border: 0; border-top: 1px solid #dde0db; margin: 36px 0; }
+#wenyan pre { padding: 14px; margin: 24px 0; background-color: #f5f6f4; font-size: 12px; overflow-x: auto; }
+#wenyan code { font-family: Menlo, Consolas, monospace; font-size: 0.88em; }
+#wenyan table { border-collapse: collapse; width: 100%; margin: 24px 0; font-size: 13px; }
+#wenyan th, #wenyan td { border: 1px solid #dde0db; padding: 8px; color: #373a36; }

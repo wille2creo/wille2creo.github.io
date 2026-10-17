@@ -1,0 +1,18 @@
+{
+  "name": "zhenzhi-publishing",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^22.21.0 || >=24.0.0"
+  },
+  "scripts": {
+    "wechat:preview": "node wechat/cli.mjs preview",
+    "wechat:export": "node wechat/cli.mjs export",
+    "wechat:test": "make build && node --test wechat/test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@wenyan-md/cli": "2.0.12",
+    "jsdom": "27.4.0",
+    "yaml": "2.9.1"
+  }
+}

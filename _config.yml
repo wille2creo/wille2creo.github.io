@@ -34,6 +34,10 @@ atom_feed:
   hide: true
 
 exclude:
+  - /wechat
+  - /node_modules
+  - package.json
+  - package-lock.json
   - /.playwright-cli
   - AGENTS.md
   - ARTWORK.md

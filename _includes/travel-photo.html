@@ -1,0 +1,25 @@
+{% assign photo_src = include.src %}
+{% unless photo_src contains '://' %}
+  {% assign photo_src = photo_src | relative_url %}
+{% endunless %}
+{% assign photo_link = include.link | default: photo_src %}
+{% if include.link %}
+  {% unless photo_link contains '://' %}
+    {% assign photo_link = photo_link | relative_url %}
+  {% endunless %}
+{% endif %}
+<figure class="travel-photo travel-photo--{{ include.size | default: 'standard' }}">
+  <a href="{{ photo_link | escape }}"
+    aria-label="查看原图：{{ include.alt | escape }}">
+    <img src="{{ photo_src | escape }}" alt="{{ include.alt | escape }}"
+      {% if include.aspect_ratio %}
+        class="image--cropped"
+        style="--image-ratio: {{ include.aspect_ratio | escape }};"
+      {% endif %}
+      width="{{ include.width }}" height="{{ include.height }}"
+      loading="lazy" decoding="async">
+  </a>
+  {% if include.credit %}
+    <figcaption>{{ include.credit | escape }}</figcaption>
+  {% endif %}
+</figure>

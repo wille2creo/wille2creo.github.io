@@ -1,17 +1,70 @@
+.layout--single.moderate {
+  --article-width: 1120px;
+  --toc-width: 180px;
+  --toc-gap: 28px;
+}
+
 .layout--single.moderate #main {
-  max-width: 96vw;
+  width: 96%;
+  max-width: calc(var(--article-width) + 2em);
 }
 
 .layout--single.moderate .page {
+  float: none;
   width: 100%;
+  max-width: none;
   padding-inline-end: 0;
 }
 
 .layout--single.moderate .page__inner-wrap {
   float: none;
   width: 100%;
-  max-width: 62rem;
+  max-width: var(--article-width);
   margin-inline: auto;
+}
+
+.layout--single .page__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.75rem;
+
+  .page__title {
+    margin: 0;
+    min-width: 0;
+  }
+
+  .page__date {
+    margin: 0;
+    color: var(--site-muted);
+    font-size: max(12px, 0.65rem);
+    font-weight: 400;
+    line-height: 1.5;
+    white-space: nowrap;
+  }
+}
+
+.layout--single footer.page__meta:not(:has(*)) {
+  display: none;
+}
+
+// Keep the index in the reading flow until there is room beside the article.
+.layout--single.moderate .sidebar__right,
+.layout--single.moderate .sidebar__right.sticky {
+  position: static;
+  float: none;
+  width: 100%;
+  margin-inline: 0;
+  padding-inline-start: 0;
+}
+
+.layout--single.moderate .sidebar__right:not(:has(.toc__menu)) {
+  display: none;
+}
+
+.layout--single.moderate .sidebar__right.sticky .toc .toc__menu {
+  max-height: none;
 }
 
 .layout--single.moderate .toc {
@@ -40,34 +93,41 @@
   font-weight: 500;
 }
 
-@media (min-width: 48.0625em) {
-  .layout--single.moderate .page__inner-wrap {
-    max-width: 75%;
-    width: 75%;
-  }
-}
-
-@media (min-width: 64em) {
-  .layout--single.moderate {
-    --toc-width: clamp(9rem, 12vw, 11rem);
+@media (min-width: 48em) and (max-width: 79.999em) {
+  .layout--single.moderate .toc__menu {
+    column-count: 2;
+    column-gap: 1rem;
   }
 
-  .layout--single.moderate .page {
-    float: none;
-    max-width: none;
-    margin-inline: auto;
-  }
-
-  .layout--single.moderate .sidebar__right {
-    width: var(--toc-width);
-    margin-inline-end: calc(-1 * var(--toc-width));
-    padding-inline-start: 1rem;
+  .layout--single.moderate .toc__menu > li {
+    break-inside: avoid;
   }
 }
 
 @media (min-width: 80em) {
-  .layout--single.moderate .sidebar__right {
-    padding-inline-start: 1.25rem;
+  // Center the article and its actual index together, reserving one side only.
+  .layout--single.moderate #main:has(.toc__menu) {
+    max-width: calc(var(--article-width) + var(--toc-width) +
+      var(--toc-gap) + 2em);
+  }
+
+  .layout--single.moderate .page:has(.toc__menu) .page__inner-wrap {
+    width: calc(100% - var(--toc-width) - var(--toc-gap));
+    margin-inline-start: 0;
+  }
+
+  .layout--single.moderate .sidebar__right,
+  .layout--single.moderate .sidebar__right.sticky {
+    position: sticky;
+    top: 2em;
+    float: right;
+    width: var(--toc-width);
+    margin-inline-end: calc(-1 * (var(--toc-width) + var(--toc-gap)));
+  }
+
+  .layout--single.moderate .sidebar__right.sticky .toc .toc__menu {
+    overflow-y: auto;
+    max-height: calc(100vh - 7em);
   }
 }
 
@@ -86,8 +146,9 @@
 
 @media (min-width: 64em) {
   .page__content .artwork--plate {
-    width: 106%;
+    width: min(106%, calc(100% + 24px));
+    max-width: 1060px;
     margin-block: 1.75rem;
-    margin-inline-start: -6%;
+    margin-inline-start: max(-6%, -24px);
   }
 }

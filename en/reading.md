@@ -9,12 +9,13 @@ permalink: /en/now/
 
 A reading list organized by year, updated from time to time.
 
-Updated 2026-10-01
+Updated 2026-10-17
 
 ## 2026
 
 - The Secret of the Golden Flower, Carl Jung
 - A Parting of the Ways: Carnap, Cassirer, and Heidegger, Michael Friedman
+- Twilight of the Idols, Friedrich Nietzsche
 
 ## 2025
 

@@ -64,8 +64,10 @@ valley, and storm have entered the text. The include receives the shared
 assets, their dimensions, and localized alt text.
 
 The artwork uses transparent pigment on the page's own background, with
-no rectangular paper field, caption, or filter. Desktop width is 106% of
-the text column, extending left; smaller screens use 100%.
+no rectangular paper field, caption, or filter. On desktop it extends left
+by up to 24px, with a maximum width of 1060px, so a wider reading column
+does not enlarge the work or push its edges offscreen. Smaller screens use
+the content width.
 
 `plate.light.png` is a generated background-extraction edit of the supplied
 original. `plate.dark.png` is a companion generated paint-value adaptation
@@ -110,9 +112,12 @@ artwork:
     height: 406
 ```
 
-Previews preserve the whole composition and transparent edges, with no
-crop, frame, or caption. They sit beside the text above 768px and below it
-on smaller screens. Keep them occasional to preserve the list's rhythm.
+Art previews preserve the whole composition and transparent edges, with no
+crop, frame, or caption. A photo preview can explicitly set
+`preview.aspect_ratio: "16 / 9"` for a cropped display, while `width` and
+`height` still describe the source file. Previews sit beside the text above
+768px and below it on smaller screens. Keep them occasional to preserve
+the list's rhythm.
 The preview is decorative; descriptive alt text stays with the article's
 primary artwork. Omit `home_preview` or set it to `false` to disable it.
 
@@ -122,7 +127,7 @@ themes. An optional `preview` object provides smaller home assets with
 their own `light`, optional `dark`, and actual `width` and `height`. Omit
 the entire object to reuse the article assets and dimensions. Preserve the
 composition and keep its theme treatment consistent with the article.
-Images load lazily and reserve their actual aspect ratio to avoid shifting
+Images load lazily and reserve their displayed aspect ratio to avoid shifting
 the list as they load.
 
 Thunderstorm uses 720px-wide transparent WebP previews, resized from the

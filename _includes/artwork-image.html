@@ -4,6 +4,10 @@
       srcset="{{ include.dark | relative_url | escape }}">
   {% endif %}
   <img src="{{ include.light | relative_url | escape }}"
+    {% if include.aspect_ratio %}
+      class="image--cropped"
+      style="--image-ratio: {{ include.aspect_ratio | escape }};"
+    {% endif %}
     alt="{{ include.alt | default: '' | escape }}"
     width="{{ include.width }}" height="{{ include.height }}"
     loading="lazy" decoding="async">

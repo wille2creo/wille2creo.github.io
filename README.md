@@ -66,9 +66,9 @@ load MathJax from jsDelivr. Write math as `$$...$$`: Kramdown distinguishes
 inline math within a paragraph from display math on its own line. The MathJax
 configuration includes the `cancel` extension for barred-subject notation.
 
-The About and Reading pages live in `zh/about.md`, `zh/now.md`, `en/about.md`,
-and `en/now.md`. Reading lists use yearly Markdown sections; update their
-visible date when changing entries. The Chinese list keeps the full record.
+The About and Reading pages live in `zh/about.md`, `zh/reading.md`,
+`en/about.md`, and `en/reading.md`. Reading lists use yearly Markdown
+sections; update their visible date when changing entries. The Chinese list keeps the full record.
 The English list selects foreign works, Chinese classics, and established
 modern Chinese works with published or recognized English titles. Preserve
 the earliest reading year for each book and the relative order within each

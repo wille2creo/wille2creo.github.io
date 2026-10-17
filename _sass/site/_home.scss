@@ -231,4 +231,8 @@ html[lang="en"] .site-intro__dek {
     width: 100%;
     margin: 0;
   }
+
+  .layout--home .home-artwork-post + .home-artwork-post {
+    margin-top: 1.25rem;
+  }
 }

@@ -71,7 +71,7 @@ async function checkVisibleImages() {
 
 test('entry, both languages, archives, and posts fit desktop and phone viewports', async () => {
   for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024], [674, 767],
-    [390, 844], [320, 568], [667, 375], [844, 390]]) {
+    [390, 844], [320, 568], [296, 642], [667, 375], [844, 390]]) {
     await page.setViewportSize({ width, height });
     for (const route of ['/', '/zh/', '/en/', '/archive.html', '/en/archive.html',
       '/2026/10/17/达科他五日/', '/2026/08/30/Thunderstorm/']) {
@@ -86,7 +86,7 @@ test('entry, both languages, archives, and posts fit desktop and phone viewports
       ), `${route}: overflow at ${width}`);
       if (['/zh/', '/en/'].includes(route) && width <= 760) {
         const rows = await page.locator(
-          '.visible-links a, .site-controls > *').evaluateAll(elements =>
+          '.visible-links a, .compact-nav summary, .site-controls > *').evaluateAll(elements =>
           elements.filter(element => element.getClientRects().length).map(element => {
             const rect = element.getBoundingClientRect();
             return rect.top + rect.height / 2;
@@ -158,7 +158,7 @@ test('language, search, failure recovery, focus, and theme persistence work', as
 });
 
 test('home branding, pagination, and article navigation fit the reading layout', async () => {
-  for (const width of [1440, 674, 390, 320]) {
+  for (const width of [1440, 674, 391, 390, 375, 360, 320, 296]) {
     await page.setViewportSize({ width, height: 900 });
     for (const locale of ['zh', 'en']) {
       await page.goto(`${base}/${locale}/`);
@@ -176,9 +176,21 @@ test('home branding, pagination, and article navigation fit the reading layout',
       await page.waitForFunction(() => getComputedStyle(
         document.querySelector('.site-title')).visibility === 'visible');
       assert.ok(await brand.isVisible(), 'Scrolling restores the wordmark');
+      const boxes = await page.locator(
+        '.site-title, .visible-links a, .compact-nav summary, .site-controls > *'
+      ).evaluateAll(elements => elements
+        .filter(element => element.getClientRects().length)
+        .map(element => {
+          const rect = element.getBoundingClientRect();
+          return { left: rect.left, right: rect.right };
+        }).sort((a, b) => a.left - b.left));
+      assert.ok(boxes.every((box, index) => box.left >= 0
+        && box.right <= width + 1
+        && (index === 0 || box.left >= boxes[index - 1].right - 1)),
+      'Header controls fit without overlap after scrolling');
       assert.ok(await page.evaluate(() =>
         document.documentElement.scrollWidth <= innerWidth + 1));
-      if (width <= 540) {
+      if (await page.locator('.compact-nav summary').isVisible()) {
         const menu = page.locator('.compact-nav');
         await menu.locator('summary').click();
         assert.ok(await menu.getByRole('link').first().isVisible());

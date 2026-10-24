@@ -1,9 +1,20 @@
 {% assign locale = include.locale | default: site.locale %}
 {% comment %}
   Based on minimal-mistakes-jekyll 4.28.1. Local delta: select the brand,
-  home and navigation by locale (also the cache key), with always-visible links.
+  home and navigation by locale, with a compact menu on narrow screens.
 {% endcomment %}
 {% assign language = site.data.languages[locale] %}
+
+{% capture navigation_links %}
+          {%- for link in site.data.navigation[locale] -%}
+            <li class="masthead__menu-item">
+              <a href="{{ link.url | relative_url }}"
+                {% if page.url == link.url %}aria-current="page"{% endif %}>
+                {{- link.title -}}
+              </a>
+            </li>
+          {%- endfor -%}
+{% endcapture %}
 
 <div class="masthead"
   {% if page.layout == 'home' and paginator.page == 1 %}
@@ -18,15 +29,16 @@
           {{ language.brand | escape_once | strip }}
         </a>
         <ul class="visible-links">
-          {%- for link in site.data.navigation[locale] -%}
-            <li class="masthead__menu-item">
-              <a href="{{ link.url | relative_url }}"
-                {% if page.url == link.url %}aria-current="page"{% endif %}>
-                {{- link.title -}}
-              </a>
-            </li>
-          {%- endfor -%}
+          {{ navigation_links }}
         </ul>
+        <details class="compact-nav">
+          <summary aria-label="{{ site.data.ui-text[locale].primary_navigation }}">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </summary>
+          <ul class="compact-nav__links">{{ navigation_links }}</ul>
+        </details>
       </nav>
       {% include site-controls.html locale=locale %}
     </div>

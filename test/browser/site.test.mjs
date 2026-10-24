@@ -70,7 +70,7 @@ async function checkVisibleImages() {
 }
 
 test('entry, both languages, archives, and posts fit desktop and phone viewports', async () => {
-  for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024],
+  for (const [width, height] of [[1440, 1000], [1024, 768], [768, 1024], [674, 767],
     [390, 844], [320, 568], [667, 375], [844, 390]]) {
     await page.setViewportSize({ width, height });
     for (const route of ['/', '/zh/', '/en/', '/archive.html', '/en/archive.html',
@@ -84,6 +84,16 @@ test('entry, both languages, archives, and posts fit desktop and phone viewports
       assert.ok(await page.evaluate(() =>
         document.documentElement.scrollWidth <= innerWidth + 1
       ), `${route}: overflow at ${width}`);
+      if (['/zh/', '/en/'].includes(route) && width <= 760) {
+        const rows = await page.locator(
+          '.visible-links a, .site-controls > *').evaluateAll(elements =>
+          elements.filter(element => element.getClientRects().length).map(element => {
+            const rect = element.getBoundingClientRect();
+            return rect.top + rect.height / 2;
+          }));
+        assert.ok(Math.max(...rows) - Math.min(...rows) <= 1,
+          `${route}: header stays on one row at ${width}`);
+      }
       if (['/zh/', '/en/'].includes(route) && [1440, 390].includes(width)) {
         const language = route === '/zh/' ? 'zh' : 'en';
         await page.screenshot({ path: path.join(artifacts,
@@ -148,7 +158,7 @@ test('language, search, failure recovery, focus, and theme persistence work', as
 });
 
 test('home branding, pagination, and article navigation fit the reading layout', async () => {
-  for (const width of [1440, 390, 320]) {
+  for (const width of [1440, 674, 390, 320]) {
     await page.setViewportSize({ width, height: 900 });
     for (const locale of ['zh', 'en']) {
       await page.goto(`${base}/${locale}/`);
@@ -165,6 +175,15 @@ test('home branding, pagination, and article navigation fit the reading layout',
       await page.locator('.pagination').scrollIntoViewIfNeeded();
       await page.waitForFunction(() => getComputedStyle(
         document.querySelector('.site-title')).visibility === 'visible');
+      assert.ok(await brand.isVisible(), 'Scrolling restores the wordmark');
+      assert.ok(await page.evaluate(() =>
+        document.documentElement.scrollWidth <= innerWidth + 1));
+      if (width <= 540) {
+        const menu = page.locator('.compact-nav');
+        await menu.locator('summary').click();
+        assert.ok(await menu.getByRole('link').first().isVisible());
+        await menu.locator('summary').click();
+      }
       const geometry = await page.evaluate(() => {
         const items = [...document.querySelectorAll('.pagination li')]
           .map(item => item.getBoundingClientRect());
@@ -212,6 +231,30 @@ test('home branding, pagination, and article navigation fit the reading layout',
     }
   }
   assert.deepEqual(errors, []);
+});
+
+test('continuation pages start directly below the header', async () => {
+  for (const width of [1440, 674, 390, 320, 667]) {
+    await page.setViewportSize({ width, height: 767 });
+    for (const locale of ['zh', 'en']) {
+      for (const fragment of ['', '#posts']) {
+        await page.goto(`${base}/${locale}/p/2/${fragment}`);
+        const gap = await page.evaluate(() => {
+          const header = document.querySelector('.masthead')
+            .getBoundingClientRect();
+          const entry = document.querySelector('.journal-entry')
+            .getBoundingClientRect();
+          return entry.top - header.bottom;
+        });
+        assert.ok(gap >= -1 && gap <= 1,
+          `${locale} page 2 at ${width}${fragment}: gap ${gap}`);
+      }
+      if ([674, 390].includes(width)) {
+        await page.screenshot({ path: path.join(artifacts,
+          `continuation-${locale}-${width}.png`) });
+      }
+    }
+  }
 });
 
 test('pagination, contents, archive fragments, and the native image viewer integrate', async () => {

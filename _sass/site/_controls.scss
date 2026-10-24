@@ -1,3 +1,7 @@
+.compact-nav {
+  display: none;
+}
+
 .masthead__menu {
   display: flex;
   align-items: center;
@@ -225,8 +229,93 @@
     padding-inline-start: 8px;
     margin-inline-start: 12px;
   }
+  // Release the wordmark space only while the home intro is visible.
+  .layout--home {
+    .masthead__menu {
+      flex-wrap: nowrap;
+      gap: 0;
+    }
+    .site-nav {
+      display: flex;
+      flex-wrap: nowrap;
+    }
+    .site-nav .site-title {
+      display: block;
+      flex: none;
+      margin-inline-end: 16px;
+    }
+    .masthead[data-intro-visible] .site-title {
+      display: none;
+    }
+    .site-nav .visible-links {
+      flex-basis: auto;
+      justify-content: flex-end;
+      gap: clamp(4px, 2vw, 16px);
+    }
+    .site-nav .visible-links a {
+      min-width: 0;
+      white-space: nowrap;
+    }
+    .masthead__menu .site-controls {
+      margin-inline-start: 8px;
+      padding-inline-start: 4px;
+    }
+  }
   .search-content__inner-wrap {
     padding-top: 36px;
+  }
+}
+
+@media (max-width: 540px) {
+  .layout--home .masthead:not([data-intro-visible]) {
+    .site-title {
+      margin-inline-end: auto;
+      font-size: 26px;
+    }
+    .visible-links {
+      display: none;
+    }
+    .compact-nav {
+      display: block;
+      margin-inline-start: 4px;
+    }
+    .compact-nav summary {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 44px;
+      list-style: none;
+      cursor: pointer;
+    }
+    .compact-nav summary::-webkit-details-marker {
+      display: none;
+    }
+    .compact-nav summary svg {
+      width: 19px;
+      height: 19px;
+      fill: none;
+      stroke: var(--site-nav-ink);
+      stroke-width: 1.5;
+    }
+    .compact-nav__links {
+      position: absolute;
+      inset: 100% 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 28px;
+      margin: 0;
+      padding: 12px var(--site-gutter);
+      border-bottom: 1px solid var(--site-line);
+      background: var(--site-paper);
+    }
+    .compact-nav__links a {
+      padding-block: 12px;
+      color: var(--site-nav-ink);
+      font-size: 13px;
+    }
+    .site-controls {
+      margin-inline-start: 4px;
+    }
   }
 }
 

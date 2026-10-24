@@ -21,13 +21,6 @@
         </svg>
       </button>
     {% endif %}
-    <a class="site-control site-control--language"
-      href="{{ other_language.home | relative_url }}"
-      hreflang="{{ other_locale }}"
-      aria-label="{{ labels.current_label }}: {{ current_language.language_name }}; {{ labels.switch_to_label }} {{ other_language.language_name }}"
-      title="{{ labels.switch_to_label }} {{ other_language.language_name }}">
-      {{ other_language.label }}
-    </a>
   {% endunless %}
   <button class="site-control site-control--theme" type="button"
     data-theme-switch data-current-label="{{ labels.current_label }}"
@@ -46,4 +39,13 @@
       <path d="M12 17v4M8 21h8" />
     </svg>
   </button>
+  {% unless page.layout == 'language-selector' %}
+    <a class="site-control site-control--language"
+      href="{{ other_language.home | relative_url }}"
+      hreflang="{{ other_locale }}"
+      aria-label="{{ labels.current_label }}: {{ current_language.language_name }}; {{ labels.switch_to_label }} {{ other_language.language_name }}"
+      title="{{ labels.switch_to_label }} {{ other_language.language_name }}">
+      {{ other_language.label }}
+    </a>
+  {% endunless %}
 </div>

@@ -1,0 +1,31 @@
+---
+layout: default
+---
+{% assign entries = paginator.posts | default: site.posts
+  | where: "locale", page.locale
+  | where_exp: "post", "post.hidden != true" %}
+{% assign latest = entries | first %}
+{% assign featured = nil %}
+{% unless paginator.page > 1 %}
+  {% if latest.artwork.home_preview == true and latest.artwork.light %}
+    {% assign featured = latest %}
+  {% endif %}
+{% endunless %}
+<div id="main" role="main"
+  {% if paginator.page > 1 %}class="journal-continuation"{% endif %}>
+  {% if paginator.page > 1 %}
+    <h1 class="sr-only">{{ page.title }}: {{ paginator.page }}</h1>
+  {% endif %}
+  {{ content }}
+  <div id="posts" class="post-list-anchor"></div>
+  {% if featured %}
+    {% include journal-feature.html post=featured %}
+  {% endif %}
+  <div class="journal-entries">
+    {% for post in entries %}
+      {% if post.id == featured.id %}{% continue %}{% endif %}
+      {% include journal-entry.html post=post %}
+    {% endfor %}
+  </div>
+  {% include paginator.html locale=page.locale %}
+</div>

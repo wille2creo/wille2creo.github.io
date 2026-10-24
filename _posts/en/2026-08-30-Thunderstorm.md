@@ -2,6 +2,7 @@
 title: Thunderstorm
 locale: en
 artwork:
+  type: plate
   home_preview: true
   light: /assets/art/thunderstorm/plate.light.png
   dark: /assets/art/thunderstorm/plate.dark.png

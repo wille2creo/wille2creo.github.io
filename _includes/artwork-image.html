@@ -10,5 +10,6 @@
     {% endif %}
     alt="{{ include.alt | default: '' | escape }}"
     width="{{ include.width }}" height="{{ include.height }}"
-    loading="lazy" decoding="async">
+    loading="{{ include.loading | default: 'lazy' }}" decoding="async"
+    {% if include.loading == 'eager' %}fetchpriority="high"{% endif %}>
 </picture>

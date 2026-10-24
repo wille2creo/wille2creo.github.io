@@ -1,3 +1,12 @@
+{% assign locale = page.locale | default: site.locale %}
+{% if locale == 'zh-CN' or page.layout == 'language-selector' %}
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="{{ '/assets/fonts/AlimamaDaoLiTi-Regular.woff2' | relative_url }}">
+{% endif %}
+{% if locale == 'en' or page.layout == 'language-selector' %}
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="{{ '/assets/fonts/blog-brand-en.woff2' | relative_url }}">
+{% endif %}
 <link rel="icon" href="{{ '/favicon.ico' | relative_url }}" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32"
   href="{{ '/assets/favicon-32x32.png' | relative_url }}">
@@ -5,9 +14,9 @@
   href="{{ '/assets/favicon-16x16.png' | relative_url }}">
 <link rel="apple-touch-icon" sizes="180x180"
   href="{{ '/assets/apple-touch-icon.png' | relative_url }}">
-<meta id="theme-color-light" name="theme-color" content="#f5f1e8"
+<meta id="theme-color-light" name="theme-color" content="#f2f3ef"
   media="(prefers-color-scheme: light)">
-<meta id="theme-color-dark" name="theme-color" content="#151814"
+<meta id="theme-color-dark" name="theme-color" content="#19241f"
   media="(prefers-color-scheme: dark)">
 <script src="{{ '/assets/js/site-controls.js' | relative_url }}"></script>
 {% if site.search and page.layout != 'language-selector' %}

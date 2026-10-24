@@ -1,9 +1,10 @@
 # Local fonts
 
-Branding and interface fonts are self-hosted. Font files retain their
-copyright and license metadata. Body text and search text keep the theme's
-existing font stack. All faces use `font-display: swap`: a fallback may
-appear while loading or if a font fails to load.
+Branding fonts are self-hosted. Font files retain their copyright and
+license metadata. Reading and search text use the site's system serif
+stack; navigation and controls use system sans-serif fonts. All faces use
+`font-display: swap`: a fallback may appear while loading or if a font fails
+to load.
 
 ## Branding
 
@@ -43,10 +44,10 @@ the original, including conjuncts and vowel positioning.
 
 ## Interface text
 
-Navigation, language switches, pagination, post contents navigation and
-language landing-page choices use the theme's system sans-serif stack.
-There are no interface font downloads, generated character ranges or
-font-generation dependencies. Search text inherits the body font.
+Navigation, controls, pagination, and contents navigation use the system
+sans-serif stack. Reading and search text use system serif fonts. Language
+landing-page choices use the branding faces above. Interface text needs no
+font downloads, generated character ranges, or font-generation dependencies.
 
 ## Pinned sources
 

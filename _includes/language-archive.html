@@ -1,5 +1,11 @@
 {% assign language_posts = site.posts | where: "locale", page.locale %}
 {% assign posts_by_year = language_posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+<nav class="archive-years"
+  aria-label="{{ site.data.ui-text[page.locale].browse_by_year }}">
+  {% for year in posts_by_year %}
+    <a href="#{{ year.name }}">{{ year.name }}</a>
+  {% endfor %}
+</nav>
 {% for year in posts_by_year %}
   <section class="archive-year" id="{{ year.name }}">
     <h2 class="archive-year__title">{{ year.name }}</h2>

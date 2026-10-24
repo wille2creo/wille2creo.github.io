@@ -1,5 +1,6 @@
 zh-CN:
   search_label: "搜索文章"
+  search_close_label: "关闭搜索"
   search_label_text: "搜索文章标题和正文"
   search_placeholder_text: "搜索中文文章…"
   search_loading: "正在搜索…"
@@ -21,11 +22,13 @@ zh-CN:
   pagination_next: "→"
   menu_label: "切换菜单"
   toc_label: "目录"
+  browse_by_year: "按年份浏览"
   ext_link_label: "直接链接"
   recent_posts: "尔来"
   back_to_top: "返回顶部"
 en:
   search_label: "Search posts"
+  search_close_label: "Close search"
   search_label_text: "Search post titles and content"
   search_placeholder_text: "Search English posts…"
   search_loading: "Searching…"
@@ -40,3 +43,5 @@ en:
   theme_light: "Light"
   theme_dark: "Dark"
   theme_system: "System"
+  toc_label: "On this page"
+  browse_by_year: "Browse by year"

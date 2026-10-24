@@ -1,6 +1,6 @@
 ---
 layout: default
-# Based on minimal-mistakes-jekyll 4.28.1; keep the date beside the title.
+# Based on minimal-mistakes-jekyll 4.28.1; localized dates and contents.
 ---
 {%- assign locale = page.locale | default: layout.locale | default: site.locale %}
 
@@ -24,6 +24,7 @@ layout: default
   {% include sidebar.html locale=locale %}
 
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork"{% if page.locale %} lang="{{ page.locale }}"{% endif %}>
+    <meta itemprop="url" content="{{ page.url | absolute_url }}">
     {% if page.title %}<meta itemprop="headline" content="{{ page.title | replace: '|', '&#124;' | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
     {% if page.excerpt %}<meta itemprop="description" content="{{ page.excerpt | markdownify | strip_html | strip_newlines | escape_once }}">{% endif %}
     {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date_to_xmlschema }}">{% endif %}
@@ -35,7 +36,7 @@ layout: default
           <div class="page__heading">
             {% if page.title -%}
             <h1 id="page-title" class="page__title p-name" itemprop="headline">
-              <a href="{{ page.url | absolute_url }}" itemprop="url">{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</a>
+              {{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}
             </h1>
             {%- endif %}
             {% include page__date.html locale=locale %}
@@ -47,9 +48,20 @@ layout: default
       <section class="page__content e-content" itemprop="text">
         {% if page.toc %}
           <aside class="sidebar__right {% if page.toc_sticky %}sticky{% endif %}">
-            <nav class="toc" aria-label="Table of contents">
-              <header><h4 class="nav__title"><i class="fas fa-{{ page.toc_icon | default: 'file-alt' }}"></i> {{ page.toc_label | default: site.data.ui-text[locale].toc_label | default: "On this page" }}</h4></header>
-              {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" skip_no_ids=true %}
+            <nav class="toc"
+              aria-label="{{ site.data.ui-text[locale].toc_label }}">
+              <header>
+                <details class="toc-disclosure" data-toc open>
+                  <summary class="nav__title">
+                    {{ page.toc_label | default: site.data.ui-text[locale].toc_label }}
+                    <svg viewBox="0 0 16 16" aria-hidden="true">
+                      <path d="m4 6 4 4 4-4" fill="none"
+                        stroke="currentColor" stroke-width="1.2" />
+                    </svg>
+                  </summary>
+                  {% include toc.html sanitize=true html=content h_min=1 h_max=6 class="toc__menu" skip_no_ids=true %}
+                </details>
+              </header>
             </nav>
           </aside>
         {% endif %}

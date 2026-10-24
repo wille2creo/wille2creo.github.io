@@ -13,7 +13,8 @@
   {% endif %}
 {% endfor %}
 {% if previous_post or next_post %}
-  <nav class="pagination">
+  <nav class="post-navigation"
+    aria-label="{{ site.data.ui-text[locale].pagination_label }}">
     {% assign neighbors = "previous,next" | split: "," %}
     {% for direction in neighbors %}
       {% if direction == 'previous' %}
@@ -25,11 +26,10 @@
       {% endif %}
       {% if neighbor %}
         <a href="{{ neighbor.url | relative_url }}"
-          class="pagination--pager"
-          title="{{ neighbor.title | escape }}">{{ label }}</a>
-      {% else %}
-        <span class="pagination--pager disabled"
-          aria-disabled="true">{{ label }}</span>
+          class="post-navigation__link post-navigation__link--{{ direction }}">
+          <span class="post-navigation__direction">{{ label }}</span>
+          <span class="post-navigation__title">{{ neighbor.title }}</span>
+        </a>
       {% endif %}
     {% endfor %}
   </nav>

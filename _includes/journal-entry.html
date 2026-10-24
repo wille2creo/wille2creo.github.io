@@ -1,0 +1,13 @@
+{% assign entry = include.post %}
+<article class="journal-entry">
+  <a class="journal-entry__link" href="{{ entry.url | relative_url }}">
+    <time datetime="{{ entry.date | date_to_xmlschema }}">
+      {{ entry.date | date: "%Y.%m.%d" }}
+    </time>
+    <h2>{{ entry.title }}</h2>
+    <p>{{ entry.excerpt | markdownify | strip_html | truncate: 110 }}</p>
+    <span class="journal-entry__arrow" aria-hidden="true">
+      {% include journal-arrow.html %}
+    </span>
+  </a>
+</article>

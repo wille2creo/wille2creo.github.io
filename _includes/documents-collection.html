@@ -10,10 +10,5 @@
 {% endif %}
 
 {%- for post in entries -%}
-  {% if page.layout == 'home' and post.artwork.home_preview == true
-    and post.artwork.light %}
-    {% include home-artwork-post.html locale=locale type=include.type %}
-  {% else %}
-    {% include archive-single.html locale=locale type=include.type %}
-  {% endif %}
+  {% include archive-single.html locale=locale type=include.type %}
 {%- endfor -%}

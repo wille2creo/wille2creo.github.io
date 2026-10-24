@@ -14,6 +14,8 @@
   new MutationObserver(() => {
     const open = panel.classList.contains('is--visible');
     toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open
+      ? toggle.dataset.labelClose : toggle.dataset.labelOpen);
     if (!open) toggle.focus();
   }).observe(panel, { attributes: true, attributeFilter: ['class'] });
 

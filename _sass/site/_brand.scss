@@ -1,24 +1,22 @@
-// The wordmark has the same face and proportions at both display sizes.
+// Preserve the author's two wordmarks at every scale.
 .site-brand,
 .site-nav a.site-brand {
   font-family: "Alimama DaoLiTi", serif;
   font-weight: 400;
   font-synthesis: none;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: none;
+  color: var(--site-ink);
 }
-
 html[lang="en"] .site-brand {
   font-family: "Blog Brand EN", serif;
   font-weight: 500;
-  letter-spacing: -0.015em;
+  letter-spacing: -0.035em;
 }
-
-.greedy-nav .site-title {
-  font-size: 1.45rem;
+.site-nav .site-title {
+  font-size: 32px;
   line-height: 1.2;
 }
-
-html[lang="en"] .greedy-nav .site-title {
-  font-size: 1.3rem;
+html[lang="en"] .site-nav .site-title {
+  font-size: 31px;
 }

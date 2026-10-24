@@ -12,10 +12,10 @@ Later I studied in Shanghai and New York, and lived for a while in Chicago and B
 
 Over the years, some of the writing I wanted to keep and share has gradually found its way here. Most of it began without a subject in mind.
 
-The homepage suggests a book lying open on a writing desk: a handwritten note above the title, a line beneath it, and space around the words. It is a title page of sorts, before the writing begins.
+The homepage suggests a book lying open on a writing desk: a handwritten note and a line beside the title, with space around the words. It is a title page of sorts, before the writing begins.
 
 *Übersicht* is German for “overview”. The name owes something to Wittgenstein’s idea of a perspicuous presentation: an arrangement that makes connections visible. Writing sometimes works this way. Something familiar, set beside something else, begins to look different.  
-Above it is *amor fati* — love of fate. I take it not as resignation to what has happened or a claim that everything was for the best, but as an affirmation through which a life becomes one’s own. Only then does fate become fate. It is less a conclusion than a beginning.  
-Beneath the title is Freud’s *Wo Es war, soll Ich werden*. I read it less as a promise of mastery than as a call to live in the first person: to take responsibility for a life whose desires and conflicts I do not fully understand.
+Beside it is *amor fati* — love of fate. I take it not as resignation to what has happened or a claim that everything was for the best, but as an affirmation through which a life becomes one’s own. Only then does fate become fate. It is less a conclusion than a beginning.<br>
+Alongside the title is Freud’s *Wo Es war, soll Ich werden*. I read it less as a promise of mastery than as a call to live in the first person: to take responsibility for a life whose desires and conflicts I do not fully understand.
 
 You can begin with the [recent posts]({{ '/en/#posts' | relative_url }}) or [read further back]({{ '/en/archive.html' | relative_url }}).

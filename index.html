@@ -6,15 +6,20 @@ description: Übersicht / 震之
 locale: en
 ---
 
+<h1 class="language-selector__author">wille2creo</h1>
 <nav class="language-selector" aria-label="English / 中文">
   <a class="language-selector__choice language-selector__choice--en"
     href="{{ '/en/' | relative_url }}" lang="en" hreflang="en"
     aria-label="English — Übersicht">
-    <span class="language-selector__disc">{{ site.data.languages.en.brand }}</span>
+    <span class="language-selector__name">{{ site.data.languages.en.brand }}</span>
+    <span class="language-selector__label">English</span>
+    <span class="language-selector__motto">{{ site.data.languages.en.description }}</span>
   </a>
   <a class="language-selector__choice language-selector__choice--zh"
     href="{{ '/zh/' | relative_url }}" lang="zh-CN" hreflang="zh-CN"
     aria-label="中文 — 震之">
-    <span class="language-selector__disc">{{ site.data.languages.zh-CN.brand }}</span>
+    <span class="language-selector__name">{{ site.data.languages.zh-CN.brand }}</span>
+    <span class="language-selector__label">中文</span>
+    <span class="language-selector__motto">{{ site.data.languages.zh-CN.description }}</span>
   </a>
 </nav>

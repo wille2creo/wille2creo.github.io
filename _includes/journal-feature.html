@@ -1,0 +1,27 @@
+{% assign feature = include.post %}
+{% assign visual = feature.artwork.preview | default: feature.artwork %}
+{% assign visual_type = visual.type | default: feature.artwork.type
+  | default: 'photo' %}
+<article class="journal-feature">
+  <a class="journal-feature__link" href="{{ feature.url | relative_url }}">
+    <div class="journal-feature__media
+      {% unless visual_type == 'photo' %}journal-feature__media--art{% endunless %}"
+      {% if visual.aspect_ratio and visual_type == 'photo' %}
+        style="--preview-ratio: {{ visual.aspect_ratio | escape }};"
+      {% endif %}>
+      {% include artwork-image.html light=visual.light
+        dark=visual.dark width=visual.width
+        height=visual.height loading="eager" %}
+    </div>
+    <div class="journal-feature__body">
+      <time datetime="{{ feature.date | date_to_xmlschema }}">
+        {{ feature.date | date: "%Y.%m.%d" }}
+      </time>
+      <h2>{{ feature.title }}</h2>
+      <p>{{ feature.excerpt | markdownify | strip_html }}</p>
+      <span class="journal-feature__arrow" aria-hidden="true">
+        {% include journal-arrow.html %}
+      </span>
+    </div>
+  </a>
+</article>

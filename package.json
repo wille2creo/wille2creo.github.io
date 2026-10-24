@@ -3,16 +3,23 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": "^22.21.0 || >=24.0.0"
+    "node": "26.12.1"
   },
   "scripts": {
+    "test": "make build && npm run check",
+    "check": "npm run check:syntax && node --test test/*.test.mjs wechat/test/*.test.mjs",
+    "check:syntax": "node --check assets/js/site-controls.js && node --check assets/js/site-search.js && node --check wechat/preview.js && node --check assets/js/site-article.js",
+    "test:browser": "node --test test/browser/*.test.mjs",
     "wechat:preview": "node wechat/cli.mjs preview",
     "wechat:export": "node wechat/cli.mjs export",
     "wechat:test": "make build && node --test wechat/test/*.test.mjs"
   },
   "devDependencies": {
-    "@wenyan-md/cli": "2.0.12",
-    "jsdom": "27.4.0",
+    "@css-inline/css-inline": "0.23.1",
+    "@mathjax/src": "4.1.3",
+    "jsdom": "30.1.3",
+    "marked": "18.1.1",
+    "playwright": "1.64.1",
     "yaml": "2.9.1"
   }
 }

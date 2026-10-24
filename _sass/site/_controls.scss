@@ -4,16 +4,51 @@
 }
 
 .site-nav {
-  // Keep navigation visible without the theme's collapsing menu script.
-  @extend .greedy-nav;
+  display: flex;
+  align-items: center;
   flex: 1;
   min-width: 0;
   flex-wrap: wrap;
 }
 
+.site-nav a {
+  display: block;
+  text-decoration: none;
+}
+
+.site-nav .site-title {
+  margin-inline: 0 16px;
+}
+
 .site-nav .visible-links {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
   min-width: max-content;
-  overflow: visible;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-nav .visible-links li {
+  flex: none;
+}
+
+.site-nav .visible-links a {
+  position: relative;
+}
+
+.site-nav .visible-links a::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  transform: scaleX(0);
+  transition: transform 200ms ease;
+}
+
+.site-nav .visible-links a:hover::before {
+  transform: scaleX(1);
 }
 
 .site-controls {
@@ -89,9 +124,16 @@
   box-shadow: none;
 }
 
+.search-content[data-search-panel]:not([hidden]) {
+  display: block;
+  visibility: visible;
+  flex: 1;
+}
+
 .search-content__inner-wrap {
   width: calc(100% - var(--site-gutter) * 2);
   max-width: 900px;
+  margin-inline: auto;
   padding: 56px 0;
 }
 
@@ -190,7 +232,7 @@
 
 @media (scripting: none) {
   .site-control--theme,
-  .search__toggle {
+  .site-control--search {
     display: none;
   }
 }

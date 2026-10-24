@@ -2,7 +2,6 @@
 layout: single
 title: 阅读
 locale: zh-CN
-classes: moderate
 toc: false
 permalink: /zh/now/
 ---

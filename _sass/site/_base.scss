@@ -40,7 +40,6 @@ button:focus-visible {
   max-width: var(--site-width);
   margin-inline: auto;
   padding: 0;
-  animation: none;
 }
 
 .masthead {
@@ -49,7 +48,6 @@ button:focus-visible {
   background: var(--site-masthead);
   border-bottom: 1px solid var(--site-line);
   backdrop-filter: blur(16px);
-  animation: none;
 }
 
 .masthead__inner-wrap {
@@ -60,10 +58,6 @@ button:focus-visible {
   align-items: center;
 }
 
-.greedy-nav,
-.site-nav {
-  background: transparent;
-}
 .site-nav .visible-links a,
 .site-nav .visible-links a:visited {
   margin-inline: 18px;
@@ -88,18 +82,12 @@ button:focus-visible {
 }
 
 .archive {
-  float: none;
-  width: 100%;
   margin: 0 auto 80px;
-  padding: 0;
 }
 
 .page__footer {
   margin-top: 80px;
-  padding: 0;
-  background: transparent;
   border-top: 1px solid var(--site-line);
-  animation: none;
 }
 .page__footer footer {
   width: calc(100% - var(--site-gutter) * 2);
@@ -114,10 +102,7 @@ button:focus-visible {
 }
 
 .pagination {
-  clear: both;
   margin-top: 48px;
-  padding-top: 0;
-  border: 0;
 }
 .pagination ul {
   display: flex;
@@ -128,9 +113,7 @@ button:focus-visible {
   margin: 0;
 }
 .pagination li a,
-.pagination li span,
-.pagination li:first-child > *,
-.pagination li:last-child > * {
+.pagination li span {
   display: grid;
   place-items: center;
   min-width: 44px;
@@ -156,7 +139,6 @@ button:focus-visible {
 .pagination li span.disabled:not(.current) {
   color: var(--site-disabled);
 }
-.page__meta,
 figcaption {
   color: var(--site-muted);
 }

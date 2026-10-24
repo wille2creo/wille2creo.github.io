@@ -1,17 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import path from 'node:path';
 import os from 'node:os';
 import { JSDOM } from 'jsdom';
 import { publicationContent } from '../publication.js';
 import { convert } from '../convert.mjs';
 import { root } from '../build.mjs';
+import { render } from '../render.mjs';
 
 test('one publication policy preserves body headings and restores image URLs', () => {
-  const dom = new JSDOM(`<section id="wenyan">
+  const dom = new JSDOM(`<section id="publication">
     <section class="publication-header">
       <h1 class="publication-title">预览标题</h1>
       <p class="publication-description">摘要</p>
@@ -20,7 +19,7 @@ test('one publication policy preserves body headings and restores image URLs', (
       <img src="assets/photo.jpg" data-publish-src="https://example.com/photo.jpg">
     </section></section>`);
   try {
-    const original = dom.window.document.querySelector('#wenyan');
+    const original = dom.window.document.querySelector('#publication');
     const publication = publicationContent(original);
     assert.equal(publication.querySelector('.publication-title'), null);
     assert.equal(publication.querySelector('.publication-description').textContent, '摘要');
@@ -51,14 +50,30 @@ test('portrait width is controlled by theme CSS, not build code', async () => {
     const article = path.join(work, 'input.md');
     await writeFile(theme, css.join('\n').replace('86%', '72%'));
     await writeFile(article, body);
-    const { stdout } = await promisify(execFile)(process.execPath, [
-      path.join(root, 'node_modules/@wenyan-md/cli/dist/cli.js'), 'render',
-      '--file', article, '--custom-theme', theme, '--no-footnote', '--no-mac-style',
-    ]);
-    const dom = new JSDOM(stdout);
+    const dom = new JSDOM(await render(article, theme));
     assert.equal(dom.window.document.querySelector('img.publication-portrait').style.width, '72%');
     assert.equal(dom.window.document.querySelector('img').style.height, 'auto');
     dom.window.close();
+  } finally {
+    await rm(work, { recursive: true, force: true });
+  }
+});
+
+test('MathJax 4 renders the notation used by the posts', async () => {
+  const work = await mkdtemp(path.join(os.tmpdir(), 'wechat-renderer-'));
+  try {
+    const article = path.join(work, 'input.md');
+    await writeFile(article,
+      '$$\\frac{\\cancel{S}}{s}$$\n\nText $$\\cancel{S}$$ remains inline\n');
+    const dom = new JSDOM(await render(article,
+      path.join(root, 'wechat/themes/common.css')));
+    try {
+      assert.ok(dom.window.document.querySelector('.block-equation svg'));
+      assert.ok(dom.window.document.querySelector('.inline-equation svg'));
+      assert.equal(dom.window.document.querySelector('[data-mml-node="merror"]'), null);
+    } finally {
+      dom.window.close();
+    }
   } finally {
     await rm(work, { recursive: true, force: true });
   }

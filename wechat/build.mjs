@@ -2,17 +2,15 @@ import { readFile, writeFile, mkdir, copyFile, realpath } from 'node:fs/promises
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
 import { JSDOM } from 'jsdom';
-import { parse, stringify } from 'yaml';
+import { parse } from 'yaml';
 import { convert, escapeHTML, publicURL } from './convert.mjs';
 import { publishBundle } from './bundle.mjs';
 import { publicationContent } from './publication.js';
+import { render, renderer } from './render.mjs';
 
 export const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const outRoot = path.join(root, 'wechat/out');
-const exec = promisify(execFile);
 export const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 
 function imageExtension(bytes) {
@@ -53,7 +51,7 @@ async function prepareAsset(url, context, outDir, cache) {
 }
 
 function checkContent(document) {
-  if (!document.querySelector('#wenyan .article-body')) throw new Error('Wenyan 没有返回预期文章结构');
+  if (!document.querySelector('#publication .article-body')) throw new Error('渲染器没有返回预期文章结构');
   if (document.querySelector('script, style, iframe, video, audio, form, object, embed')) {
     throw new Error('正文包含微信不支持的活动内容；请添加明确的转换规则');
   }
@@ -89,10 +87,7 @@ async function writeBundle(outDir, { source, file, converted, theme }) {
   // Front Matter is data; the header is outside the original article body.
   const header = `<header class="publication-header"><h1 class="publication-title">${escapeHTML(metadata.title)}</h1>${metadata.description
     ? `<p class="publication-description">${escapeHTML(metadata.description)}</p>` : ''}</header>`;
-  // Wenyan promotes FM description to a blockquote. Render our designed
-  // description exactly once; keep the complete metadata in manifest.json.
-  const { description, ...renderMetadata } = metadata;
-  const markdown = `---\n${stringify(renderMetadata)}---\n\n${header}\n\n<section class="article-body">\n\n${converted.body}\n</section>\n`;
+  const markdown = `${header}\n\n<section class="article-body">\n\n${converted.body}\n</section>\n`;
   const inputFile = path.join(outDir, 'input.md');
   const css = (await Promise.all(['common', theme].map(name =>
     readFile(path.join(root, `wechat/themes/${name}.css`), 'utf8')))).join('\n');
@@ -100,17 +95,11 @@ async function writeBundle(outDir, { source, file, converted, theme }) {
   await writeFile(inputFile, markdown);
   await writeFile(path.join(outDir, 'body.md'), converted.body);
   await writeFile(themeFile, css);
-  // Invoke the installed, pinned CLI. No global config, credentials or publish API.
-  const cli = path.join(root, 'node_modules/@wenyan-md/cli/dist/cli.js');
-  const { stdout, stderr } = await exec(process.execPath, [cli, 'render',
-    '--file', inputFile, '--custom-theme', themeFile,
-    '--no-footnote', '--no-mac-style'], { maxBuffer: 20 * 1024 * 1024 });
-  if (stderr.trim()) console.error(stderr.trim());
-  const dom = new JSDOM(stdout);
+  const dom = new JSDOM(await render(inputFile, themeFile));
   try {
     const document = dom.window.document;
     checkContent(document);
-    const section = document.querySelector('#wenyan');
+    const section = document.querySelector('#publication');
     const images = [];
     const assets = new Map();
     const assetFor = async url => {
@@ -150,11 +139,11 @@ async function writeBundle(outDir, { source, file, converted, theme }) {
     await writeFile(path.join(outDir, 'fragment.html'), fragment + '\n');
     const manifest = {
       source: path.relative(root, file), source_sha256: hash(source),
-      renderer: '@wenyan-md/cli@2.0.12', metadata, cover, images,
+      renderer, metadata, cover, images,
       body_text_sha256: hash(text), blocks,
       warnings: [
         '图片使用原始公开地址；微信可能拦截外链或粘贴后丢图。请按编号上传 assets 中的图片并替换。',
-        '本地预览不证明微信兼容。需在后台粘贴、保存草稿并用微信手机预览复核。',
+        '本地预览不代表微信中的最终效果。需在后台粘贴、保存草稿并用微信手机预览复核。',
         '微信可能移除站外链接；正文链接与图片署名均予以保留，发布前人工检查。',
       ],
     };

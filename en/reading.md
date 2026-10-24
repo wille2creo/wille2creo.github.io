@@ -2,7 +2,6 @@
 layout: single
 title: Reading
 locale: en
-classes: moderate
 toc: false
 permalink: /en/now/
 ---

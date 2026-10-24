@@ -1,4 +1,8 @@
-{% assign locale = page.locale | default: site.locale %}
+{% assign locale = include.locale | default: site.locale %}
+<meta charset="utf-8">
+{% include seo.html locale=locale %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 {% if locale == 'zh-CN' or page.layout == 'language-selector' %}
   <link rel="preload" as="font" type="font/woff2" crossorigin
     href="{{ '/assets/fonts/AlimamaDaoLiTi-Regular.woff2' | relative_url }}">
@@ -24,6 +28,14 @@
 {% endif %}
 {% if page.mathjax %}
   <script src="{{ '/assets/js/mathjax-config.js' | relative_url }}"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@4.0.0/tex-svg.js"
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@{{ site.data.dependencies.mathjax }}/tex-svg.js"
     defer></script>
+{% endif %}
+{% if page.layout == 'single' %}
+  <script src="{{ '/assets/js/site-article.js' | relative_url }}" defer
+    data-permalink="{{ site.data.ui-text[locale].permalink_label }}"
+    data-viewer="{{ site.data.ui-text[locale].image_viewer_label }}"
+    data-close="{{ site.data.ui-text[locale].image_close_label }}"
+    data-previous="{{ site.data.ui-text[locale].image_previous_label }}"
+    data-next="{{ site.data.ui-text[locale].image_next_label }}"></script>
 {% endif %}

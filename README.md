@@ -9,10 +9,10 @@ Personal Jekyll site published at <https://wille2creo.github.io>.
 - `_data/navigation.yml`: navigation for each language.
 - `_data/languages.yml`: brands, home links, introductions, and language labels.
 - `_data/ui-text.yml`: translated interface and accessibility labels.
-- `_includes/footer.html`: minimal footer override.
+- `_layouts/` and `_includes/`: site templates and shared components.
 - `_sass/_site.scss`: local visual entry point for focused Sass partials in
   `_sass/site/`.
-- `assets/css/main.scss`: theme stylesheet entry point plus local styles.
+- `assets/css/main.scss`: stylesheet entry point.
 - `assets/`: favicons, fonts, browser scripts, and static assets.
 - `/`: language selector; `zh/` and `en/`: language home pages.
 - `.github/workflows/pages.yml`: build, check, and deploy GitHub Pages.
@@ -29,23 +29,57 @@ make serve
 Build for production with `make build`. Local development and GitHub Actions
 use these same commands; Node.js and npm are not required.
 
+Make honors the Ruby on your `PATH` and checks it against `.ruby-version`
+before installing, building, or serving. Bundler enforces the same version.
+Select that interpreter with your preferred version manager; the repository
+does not override your machine's Ruby installation.
+
+## Validation and optional publishing tools
+
+Use the exact Node version in `.node-version`, matching CI,
+then install the locked development dependencies:
+
+```sh
+npm ci --ignore-scripts
+make check
+npx playwright install chromium
+npm run test:browser
+```
+
+`make check` builds once, checks browser-script syntax, audits generated local
+links and language listings, and runs the WeChat publisher's regression tests.
+`npm test` is equivalent. Browser checks start their own loopback server against
+the built site; screenshots go to a temporary directory, or `BROWSER_ARTIFACTS`
+when set. Run `make build` before browser checks after changing source files.
+
+CI keeps the Jekyll-only build separate from validation with Ruby, Node, and
+Chromium. Deployment requires both jobs to pass. Tests cover search, navigation,
+contents tracking, the native image dialog, language switching, themes,
+responsive layouts, and publisher clipboard behavior. Dependency updates are
+checked weekly through Dependabot.
+
+The optional [WeChat publishing tool](wechat/README.md) adapts Chinese posts
+into local exports and previews. Exporting requires Node, but does not require
+a Jekyll build or access to a publishing account. Its contract tests use Jekyll
+as an independent reference for routes and article content.
+
 ## Notes
 
-This site uses the `minimal-mistakes-jekyll` gem theme with a small editorial
-style layer split across `_sass/site/`. Keep local overrides narrow and note
-the upstream theme version in copied includes so theme updates remain
-straightforward. The local SEO include keeps titles, descriptions, canonical
-links, Open Graph metadata, publication dates, and the root schema.
+Templates and Sass modules are owned by this repository. The SEO include keeps
+titles, descriptions, canonical links, Open Graph metadata, publication dates,
+and the root schema. `_plugins/contents.rb` builds contents lists from rendered
+heading IDs using Nokogiri. MathJax's version is declared in
+`_data/dependencies.yml`. Site interactions use native browser APIs.
 
-GitHub Pages is deployed through Actions so the site can use third-party
-gem-packaged themes.
+GitHub Pages is deployed through Actions to support the local contents filter
+and language pagination.
 
 ## Languages
 
 The root `/` is a language selector. The Chinese home is `/zh/`; the English
 home is `/en/`. Both use the same visual styles and seal, with separate brands
-and introductory text. The language switch shows the current
-`中` or `EN` and opens the other home when clicked, including on a post.
+and introductory text. The language switch shows the destination
+`中` or `EN` and opens that language's home when clicked, including on a post.
 
 Put Chinese posts in `_posts/zh/` and English posts in `_posts/en/`. Posts
 default to `locale: zh-CN`; add `locale: en` to every English post. The folder
@@ -75,7 +109,7 @@ the earliest reading year for each book and the relative order within each
 year; omit later repeats. Use English titles and author names in English.
 The existing `/zh/now/` and `/en/now/` URLs remain stable.
 
-Search uses the theme's search panel with local substring matching for Chinese
+Search uses a local panel with substring matching for Chinese
 and English. `assets/search.json` indexes post titles and full content at build
 time; `assets/js/site-search.js` searches within the current locale. Multiple
 space-separated terms must all match. Set `search: false` on a post to omit it.
@@ -89,7 +123,7 @@ explicit choices persist locally across pages and languages. Light keeps the
 warm paper background; dark uses ink green, warm white text, and lighter green
 accents. The red seal retains
 its color in both modes. Shared color tokens live in `_sass/site/_tokens.scss`;
-`_includes/head/custom.html` sets matching browser chrome colors.
+`_includes/head.html` sets matching browser chrome colors.
 
 ## Published assets
 

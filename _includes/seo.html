@@ -60,7 +60,11 @@
 {% endif %}
 
 {% if page.url == '/' %}
-  {% include schema.html %}
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"Person",
+      "name":{{ site.author | jsonify }},
+      "url":{{ '/' | absolute_url | jsonify }}}
+  </script>
 {% endif %}
 
 <!-- end _includes/seo.html -->

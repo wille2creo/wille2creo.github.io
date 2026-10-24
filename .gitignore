@@ -13,7 +13,6 @@
 /.playwright-cli/
 /output/
 
-.sass-cache/
 
 /.bundle/
 /vendor/bundle

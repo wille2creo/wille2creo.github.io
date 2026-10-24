@@ -1,0 +1,32 @@
+---
+---
+{% assign locale = page.locale | default: site.locale %}
+{% assign labels = site.data.ui-text[locale] %}
+<!doctype html>
+<html lang="{{ locale }}">
+  <head>
+    {% include head.html locale=locale %}
+  </head>
+  <body class="layout--{{ page.layout }}{% if page.classes %} {{ page.classes | join: ' ' }}{% endif %}">
+    <nav class="skip-links" aria-label="{{ labels.skip_links }}">
+      <ul>
+        <li><a href="#site-nav">{{ labels.skip_primary_nav }}</a></li>
+        <li><a href="#main">{{ labels.skip_content }}</a></li>
+        <li><a href="#footer">{{ labels.skip_footer }}</a></li>
+      </ul>
+    </nav>
+    {% include masthead.html locale=locale %}
+    <div class="initial-content">
+      {{ content }}
+    </div>
+    {% if site.search %}
+      <div class="search-content" id="site-search-panel"
+        data-search-panel hidden>
+        {% include search/search_form.html locale=locale %}
+      </div>
+    {% endif %}
+    <div id="footer" class="page__footer">
+      <footer>{% include footer.html %}</footer>
+    </div>
+  </body>
+</html>

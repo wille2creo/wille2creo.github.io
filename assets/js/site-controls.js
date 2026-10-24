@@ -1,7 +1,5 @@
 (() => {
   const root = document.documentElement;
-  // Let native fragment scrolling handle header spacing and reduced motion.
-  root.setAttribute('data-scroll-ignore', '');
   const media = window.matchMedia('(prefers-color-scheme: dark)');
   const storageKey = 'blog-theme';
   const modes = ['light', 'dark', 'system'];
@@ -49,19 +47,6 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
-    // The masthead is cached per language; page state stays local.
-    document.querySelectorAll('.site-nav .visible-links a').forEach((link) => {
-      if (link.pathname === window.location.pathname) {
-        link.setAttribute('aria-current', 'page');
-      }
-    });
-    const contents = document.querySelector('[data-toc]');
-    if (contents) {
-      const wide = window.matchMedia('(min-width: 1280px)');
-      const setContents = () => { contents.open = wide.matches; };
-      setContents();
-      wide.addEventListener('change', setContents);
-    }
     document.querySelectorAll('[data-theme-switch]').forEach((button) => {
       button.addEventListener('click', () => {
         choice = modes[(modes.indexOf(choice) + 1) % modes.length];

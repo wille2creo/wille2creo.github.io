@@ -6,8 +6,10 @@
 <div class="site-controls">
   {% unless page.layout == 'language-selector' %}
     {% if site.search %}
-      <button class="site-control search__toggle" type="button"
-        aria-label="{{ labels.search_label }}" aria-controls="search"
+      <button class="site-control site-control--search" type="button"
+        data-search-toggle
+        aria-label="{{ labels.search_label }}"
+        aria-controls="site-search-panel" aria-expanded="false"
         data-label-open="{{ labels.search_label }}"
         data-label-close="{{ labels.search_close_label }}">
         <svg class="search-icon--open" viewBox="0 0 24 24" aria-hidden="true">

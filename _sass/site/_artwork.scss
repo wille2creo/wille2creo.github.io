@@ -9,3 +9,8 @@
     border-radius: 0;
   }
 }
+
+.image--cropped {
+  aspect-ratio: var(--image-ratio);
+  object-fit: cover;
+}

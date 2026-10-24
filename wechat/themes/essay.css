@@ -1,4 +1,4 @@
 /* Essay: a generous measure and quiet, book-like chapter pauses. */
-#wenyan .article-body { line-height: 2; }
-#wenyan .article-body > p { margin-bottom: 27px; }
-#wenyan figure { margin: 34px 0; }
+#publication .article-body { line-height: 2; }
+#publication .article-body > p { margin-bottom: 27px; }
+#publication figure { margin: 34px 0; }

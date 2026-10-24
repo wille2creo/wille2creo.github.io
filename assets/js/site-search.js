@@ -8,16 +8,28 @@
   let indexPromise;
   let revision = 0;
 
-  const toggle = document.querySelector('.search__toggle');
+  const toggle = document.querySelector('[data-search-toggle]');
   const panel = document.querySelector('.search-content');
-  toggle.setAttribute('aria-expanded', 'false');
-  new MutationObserver(() => {
-    const open = panel.classList.contains('is--visible');
+  const content = document.querySelector('.initial-content');
+  const setOpen = (open) => {
+    panel.hidden = !open;
+    content.hidden = open;
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open
       ? toggle.dataset.labelClose : toggle.dataset.labelOpen);
-    if (!open) toggle.focus();
-  }).observe(panel, { attributes: true, attributeFilter: ['class'] });
+  };
+  setOpen(false);
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    setOpen(open);
+    (open ? input : toggle).focus();
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !panel.hidden) {
+      setOpen(false);
+      toggle.focus();
+    }
+  });
 
   input.form.addEventListener('submit', (event) => event.preventDefault());
 

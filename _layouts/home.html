@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-{% assign entries = paginator.posts | default: site.posts
+{% assign entries = paginator.posts
   | where: "locale", page.locale
   | where_exp: "post", "post.hidden != true" %}
 {% assign latest = entries | first %}
@@ -27,5 +27,5 @@ layout: default
       {% include journal-entry.html post=post %}
     {% endfor %}
   </div>
-  {% include paginator.html locale=page.locale %}
+  {% include journal-pagination.html locale=page.locale %}
 </div>

@@ -1,121 +1,13 @@
-@import "site/tokens";
-@import "site/fonts";
-@import "site/ui";
-@import "site/base";
-@import "site/brand";
-@import "site/home";
-@import "site/archive";
-@import "site/post";
-@import "site/artwork";
-@import "site/language-selector";
-@import "site/controls";
-
-.image--cropped {
-  aspect-ratio: var(--image-ratio);
-  object-fit: cover;
-}
-
-// Photo essays: landscapes open the page; small encounters stay with the text.
-.travel-essay .page__content {
-  .travel-photo {
-    display: block;
-    width: 100%;
-    max-width: 520px;
-    margin: 2.2em auto 2.6em;
-
-    a {
-      display: block;
-      border: 0;
-    }
-
-    a:hover img {
-      box-shadow: none;
-    }
-
-    a:focus-visible {
-      outline: 2px solid var(--site-moss);
-      outline-offset: 5px;
-    }
-
-    img {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      height: auto;
-      margin: 0;
-      border-radius: 0;
-    }
-
-    figcaption {
-      margin-top: 0.8em;
-      color: var(--site-muted);
-      font-family: var(--font-ui);
-      font-size: 0.65em;
-      font-style: normal;
-      text-align: start;
-    }
-  }
-
-  .travel-photo--wide {
-    max-width: 700px;
-    margin-block: 2.8em 3em;
-  }
-
-  .travel-photo--memory {
-    max-width: 400px;
-    margin-block: 2.5em 3em;
-  }
-
-  .travel-passage {
-    display: flow-root;
-    margin-block: 1.8em;
-
-    > p:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  .travel-photo--left,
-  .travel-photo--right {
-    max-width: 280px;
-    margin-block: 0.4em 1.4em;
-  }
-
-  .travel-pair {
-    display: grid;
-    max-width: 800px;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: end;
-    gap: 1rem;
-    margin-block: 2.2em 2.6em;
-    margin-inline: auto;
-
-    .travel-photo {
-      max-width: none;
-      margin: 0;
-    }
-  }
-}
-
-@media (min-width: 48em) {
-  .travel-essay .page__content {
-    .travel-photo--left {
-      float: left;
-      width: 32%;
-      margin: 0.35em 2em 1em 0;
-    }
-
-    .travel-photo--right {
-      float: right;
-      width: 32%;
-      margin: 0.35em 0 1em 2em;
-    }
-  }
-}
-
-@media (max-width: 30em) {
-  .travel-essay .page__content .travel-pair {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 1em;
-  }
-}
+@forward "site/foundation";
+@forward "site/tokens";
+@forward "site/fonts";
+@forward "site/ui";
+@forward "site/base";
+@forward "site/brand";
+@forward "site/home";
+@forward "site/archive";
+@forward "site/post";
+@forward "site/artwork";
+@forward "site/language-selector";
+@forward "site/controls";
+@forward "site/travel";

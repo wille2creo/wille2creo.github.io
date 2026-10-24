@@ -121,10 +121,9 @@ editing may change grain, edges, and small details. These editions are
 not lossless exports from the original artwork.
 
 The article and home preview share `_includes/artwork-image.html`: one
-`picture` with an optional dark `source` and one light fallback `img`.
+`picture` with an optional dark `source` and the light `img`.
 The existing theme control selects the source for explicit and system
-themes. Without site JavaScript, it follows the system preference; readers
-that ignore `picture` sources receive a single light image. Both languages
+themes. Without site JavaScript, it follows the system preference. Both languages
 use the same editions and their own article alt text.
 
 The target is a nearly boundary-free transition into the webpage in both
@@ -183,8 +182,7 @@ The original photograph remains unchanged at
 its documentary photographs. The current home-only `prairie-wash.webp`
 is a 1774 × 887 transparent watercolor interpretation generated with the
 built-in image tool using that original photograph as its reference. It is
-an interpretation, not a lossless rendering of the encounter. Earlier
-`field-study.webp` and `burrow-encounter.webp` editions remain preserved.
+an interpretation, not a lossless rendering of the encounter.
 
 The essay's decade-long wish to see these animals, and the story of a
 photograph outliving its maker, guide the intimate encounter. Keep the

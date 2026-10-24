@@ -4,6 +4,7 @@
 {% endcomment %}
 {% assign locale = include.locale | default: site.locale %}
 {% assign labels = site.data.ui-text[locale] %}
+{% if paginator.total_pages > 1 %}
 <nav class="pagination" aria-label="{{ labels.pagination_label }}">
   <ul>
     {% if paginator.previous_page %}
@@ -42,3 +43,4 @@
     {% endif %}
   </ul>
 </nav>
+{% endif %}

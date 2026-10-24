@@ -1,6 +1,6 @@
 import { publicationContent } from './publication.js';
 
-const article = document.querySelector('#wenyan');
+const article = document.querySelector('#publication');
 const status = document.querySelector('#status');
 const images = [...article.querySelectorAll('img')];
 const selected = () => article.querySelector('.article-body');
@@ -14,17 +14,6 @@ function selectBody() {
   status.textContent = '正文已选中。按 ⌘C / Ctrl+C，再到编辑器粘贴；图片仍需逐张核对。';
 }
 
-function selectPublication() {
-  const range = document.createRange();
-  range.selectNodeContents(article);
-  const title = article.querySelector('.publication-title');
-  if (title) range.setStartAfter(title);
-  const selection = window.getSelection();
-  selection.removeAllRanges();
-  selection.addRange(range);
-  status.textContent = '摘要和正文已选中。按 ⌘C / Ctrl+C，再到编辑器粘贴；图片仍需逐张核对。';
-}
-
 document.querySelector('#select').addEventListener('click', selectBody);
 document.querySelector('#width').addEventListener('change', event => {
   document.querySelector('#paper').style.width = `${event.target.value}px`;
@@ -35,36 +24,18 @@ async function copy(bodyOnly) {
   const html = clone.outerHTML;
   const text = clone.textContent;
   try {
-    if (!navigator.clipboard?.write || typeof ClipboardItem === 'undefined') throw new Error('clipboard unavailable');
     await navigator.clipboard.write([new ClipboardItem({
       'text/html': new Blob([html], { type: 'text/html' }),
       'text/plain': new Blob([text], { type: 'text/plain' }),
     })]);
     status.textContent = '已复制带内联样式的富文本。粘贴到公众号后，请逐张核对图片并保存草稿试读。';
   } catch {
-    // Native copy event still carries explicit HTML, not localhost img URLs.
-    const range = document.createRange();
-    range.selectNodeContents(article);
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-    const listener = event => {
-      event.preventDefault();
-      event.clipboardData.setData('text/html', html);
-      event.clipboardData.setData('text/plain', text);
-    };
-    document.addEventListener('copy', listener);
-    let copied = false;
-    try { copied = document.execCommand('copy'); } catch { /* manual selection below */ }
-    document.removeEventListener('copy', listener);
-    if (copied) status.textContent = '已通过浏览器兼容方式复制富文本。粘贴后请核对图片。';
-    else if (bodyOnly) selectBody();
-    else selectPublication();
+    status.textContent = '复制失败，请检查浏览器的剪贴板权限后重试。';
   }
 }
 
 // Manual selection copy uses the same public src as the copy buttons.
-// Preserve the selected range and its inline ancestry (font/spacing on #wenyan).
+// Preserve the selected range and its inline ancestry (font/spacing on #publication).
 document.addEventListener('copy', event => {
   const selection = window.getSelection();
   if (!selection?.rangeCount || !selection.toString()) return;

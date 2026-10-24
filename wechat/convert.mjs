@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
 import { parse } from 'yaml';
 
@@ -48,7 +48,42 @@ export function publicURL(input, { site, article }) {
   const base = new URL(`${site.url}${site.baseurl || ''}/`);
   // Jekyll's relative_url applies baseurl to paths beginning with '/'.
   if (value.startsWith('/')) return new URL(value.slice(1), base).href;
-  return new URL(value, new URL(article, base)).href;
+  return new URL(value, new URL(article.replace(/^\//, ''), base)).href;
+}
+
+async function documentLink(name, context, root) {
+  root = await realpath(root);
+  const file = await realpath(path.resolve(root, name.trim().replace(/^\//, '')));
+  if (!file.startsWith(root + path.sep) || !(await stat(file)).isFile()) {
+    throw new Error(`无效 link 目标：${name}`);
+  }
+  const relative = path.relative(root, file).split(path.sep).join('/');
+  const hidden = relative.split('/').some((part, index) =>
+    part.startsWith('.') || (part.startsWith('_')
+      && !(index === 0 && part === '_posts')));
+  const excluded = (context.site.exclude ?? []).some(entry => {
+    const prefix = String(entry).replace(/^\/+|\/+$/g, '');
+    return relative === prefix || relative.startsWith(prefix + '/');
+  });
+  if (hidden || excluded) throw new Error(`link 目标未公开：${name}`);
+  if (!/\.(md|markdown|html)$/i.test(file)) {
+    return publicURL(`/${relative}`, context);
+  }
+  const source = await readFile(file, 'utf8');
+  if (!/^\uFEFF?---\r?\n/.test(source)) {
+    return publicURL(`/${relative}`, context);
+  }
+  const { data } = frontMatter(source);
+  if (relative.startsWith('_posts/')) {
+    return publicURL(postRoute(file, data, context.site), context);
+  }
+  const defaultRoute = `/${relative.replace(/\.(md|markdown)$/i, '.html')}`
+    .replace(/\/index\.html$/, '/');
+  const route = data.permalink ?? defaultRoute;
+  if (!route.startsWith('/') || /:[a-z_]+/i.test(route)) {
+    throw new Error(`link 目标的 permalink 需要明确适配：${route}`);
+  }
+  return publicURL(route, context);
 }
 
 function photo(name, args, context) {
@@ -107,8 +142,7 @@ export async function convert(source, file, site, root) {
     text => `\u0000CODE${code.push(text) - 1}\u0000`);
   converted = converted.replace(/(`+)([^`]|(?!\1)`)*?\1/g,
     text => `\u0000CODE${code.push(text) - 1}\u0000`);
-  converted = converted.replace(/{%\s*comment\s*%}[\s\S]*?{%\s*endcomment\s*%}/g, '')
-    .replace(/<!--\s*(?:more|excerpt)\s*-->/g, '');
+  converted = converted.replace(/{%\s*comment\s*%}[\s\S]*?{%\s*endcomment\s*%}/g, '');
   converted = converted.replace(/{%\s*include\s+([\w.-]+)([\s\S]*?)%}/g,
     (all, name, args) => {
       if (!['travel-photo.html', 'artwork.html', 'artwork-image.html'].includes(name)) {
@@ -121,10 +155,14 @@ export async function convert(source, file, site, root) {
     const target = path.resolve(root, '_posts', `${name}.md`);
     if (!target.startsWith(path.join(root, '_posts') + path.sep)) throw new Error('无效 post_url');
     const targetData = frontMatter(await readFile(target, 'utf8')).data;
-    converted = converted.replace(tag, publicURL(postRoute(target, targetData, site), context));
+    const url = publicURL(postRoute(target, targetData, site), context);
+    converted = converted.replace(tag, () => url);
   }
-  converted = converted.replace(/{%\s*link\s+([^%]+?)\s*%}/g,
-    (all, target) => publicURL(`/${target}`, context));
+  const linkTags = [...converted.matchAll(/{%\s*link\s+([^%]+?)\s*%}/g)];
+  for (const [tag, name] of linkTags) {
+    const url = await documentLink(name, context, root);
+    converted = converted.replace(tag, () => url);
+  }
   converted = converted.replace(/{{\s*(.*?)\s*}}/g, (all, expression) => {
     const [input, ...filters] = expression.split('|').map(x => x.trim());
     let result = valueOf(input, context);

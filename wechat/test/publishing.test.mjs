@@ -129,13 +129,13 @@ for (const [filename, route, theme, count] of [
     assert.deepEqual(actual, expected);
     assert.equal(result.manifest.metadata.theme, theme);
     assert.equal(result.manifest.images.length, count);
-    assert.equal(document.querySelector('#wenyan').firstElementChild.className, 'publication-header');
+    assert.equal(document.querySelector('#publication').firstElementChild.className, 'publication-header');
     assert.equal(document.querySelectorAll('.publication-description').length, 1);
     assert.equal(document.querySelectorAll('.publication-title').length, 0);
     const preview = new JSDOM(await readFile(path.join(result.outDir, 'preview.html'), 'utf8'));
     assert.equal(preview.window.document.querySelector('.publication-title').textContent,
       result.manifest.metadata.title);
-    assert.equal(publicationContent(preview.window.document.querySelector('#wenyan')).outerHTML,
+    assert.equal(publicationContent(preview.window.document.querySelector('#publication')).outerHTML,
       (await readFile(path.join(result.outDir, 'fragment.html'), 'utf8')).trim());
     assert.equal(document.querySelector('img').style.width, '100%');
     if (theme === 'travel') {

@@ -1,0 +1,150 @@
+* {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  margin: 0;
+  line-height: 1.5;
+}
+.initial-content {
+  flex: 1;
+}
+img {
+  max-width: 100%;
+  height: auto;
+}
+figure {
+  margin: 0;
+}
+p {
+  margin-top: 0;
+}
+nav ul,
+nav ol {
+  padding: 0;
+  list-style: none;
+}
+button,
+input {
+  font: inherit;
+}
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+[hidden] {
+  display: none !important;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.skip-links {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.skip-links a {
+  position: absolute;
+  left: -10000px;
+  white-space: nowrap;
+}
+.skip-links a:focus {
+  left: 0;
+  padding: 12px 20px;
+  background: var(--site-paper);
+}
+.masthead {
+  z-index: 20;
+}
+.masthead__inner-wrap {
+  margin-inline: auto;
+}
+.toc__menu,
+.toc__menu ul {
+  margin: 0;
+  list-style: none;
+}
+.toc__menu {
+  padding: 0;
+}
+.toc__menu ul {
+  padding-inline-start: 16px;
+}
+.toc__menu li {
+  margin: 0;
+}
+.toc__menu a {
+  display: block;
+  text-decoration: none;
+}
+.search-content {
+  display: none;
+}
+.search-content .search-input {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+:where(.page__content) {
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.3;
+  }
+  ul, ol {
+    padding-inline-start: 1.5em;
+  }
+  li {
+    margin-bottom: 0.5em;
+  }
+  pre {
+    padding: 16px;
+    overflow-x: auto;
+    background: var(--site-surface);
+  }
+  code {
+    font-family: ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+  :not(pre) > code {
+    padding: 0.15em 0.3em;
+  }
+  table {
+    width: 100%;
+    margin-block: 1.5em;
+    border-collapse: collapse;
+    font-size: 0.85em;
+  }
+  td, th {
+    padding: 10px;
+    border-bottom: 1px solid var(--site-line);
+    text-align: start;
+  }
+}
+.header-link {
+  position: relative;
+  margin-inline-start: 0.5em;
+  opacity: 0;
+  font-size: 0.8em;
+  transition: opacity 200ms ease;
+}
+.page__content :is(h1, h2, h3, h4, h5, h6):hover .header-link {
+  opacity: 1;
+}

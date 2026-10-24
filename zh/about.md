@@ -2,7 +2,6 @@
 layout: single
 title: 关于
 locale: zh-CN
-classes: moderate
 toc: false
 permalink: /zh/about/
 ---

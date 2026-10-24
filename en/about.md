@@ -2,7 +2,6 @@
 layout: single
 title: About
 locale: en
-classes: moderate
 toc: false
 permalink: /en/about/
 ---

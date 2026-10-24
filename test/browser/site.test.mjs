@@ -84,8 +84,10 @@ test('entry, both languages, archives, and posts fit desktop and phone viewports
       assert.ok(await page.evaluate(() =>
         document.documentElement.scrollWidth <= innerWidth + 1
       ), `${route}: overflow at ${width}`);
-      if (route === '/zh/' && [1440, 390].includes(width)) {
-        await page.screenshot({ path: path.join(artifacts, `home-${width}.png`) });
+      if (['/zh/', '/en/'].includes(route) && [1440, 390].includes(width)) {
+        const language = route === '/zh/' ? 'zh' : 'en';
+        await page.screenshot({ path: path.join(artifacts,
+          `home-${language}-${width}.png`) });
       }
       if ([1440, 390].includes(width) &&
         ['/archive.html', '/2026/08/30/Thunderstorm/'].includes(route)) {
@@ -145,8 +147,86 @@ test('language, search, failure recovery, focus, and theme persistence work', as
   assert.deepEqual(await page.locator('#results h2').allTextContents(), ['Thunderstorm']);
 });
 
+test('home branding, pagination, and article navigation fit the reading layout', async () => {
+  for (const width of [1440, 390, 320]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const locale of ['zh', 'en']) {
+      await page.goto(`${base}/${locale}/`);
+      const brand = page.locator('.site-title');
+      await page.waitForFunction(() => getComputedStyle(
+        document.querySelector('.site-title')).visibility === 'hidden');
+      await page.locator('[data-search-toggle]').click();
+      assert.ok(await brand.isVisible(), 'Search retains the home link');
+      assert.equal(await page.locator('#search').getAttribute('placeholder'), null);
+      assert.equal(await page.locator('#search').inputValue(), '');
+      await page.keyboard.press('Escape');
+      await page.waitForFunction(() => getComputedStyle(
+        document.querySelector('.site-title')).visibility === 'hidden');
+      await page.locator('.pagination').scrollIntoViewIfNeeded();
+      await page.waitForFunction(() => getComputedStyle(
+        document.querySelector('.site-title')).visibility === 'visible');
+      const geometry = await page.evaluate(() => {
+        const items = [...document.querySelectorAll('.pagination li')]
+          .map(item => item.getBoundingClientRect());
+        const left = Math.min(...items.map(item => item.left));
+        const right = Math.max(...items.map(item => item.right));
+        const pagination = document.querySelector('.pagination')
+          .getBoundingClientRect();
+        const footer = document.querySelector('.page__footer')
+          .getBoundingClientRect();
+        return { center: (left + right) / 2, viewport: innerWidth,
+          gap: footer.top - pagination.bottom, footerHeight: footer.height };
+      });
+      assert.ok(Math.abs(geometry.center - geometry.viewport / 2) <= 1);
+      assert.ok(geometry.gap <= 33, 'Pagination has a compact footer gap');
+      assert.ok(geometry.footerHeight <= 52, 'Copyright has a compact row');
+      await page.screenshot({ path: path.join(artifacts,
+        `pagination-${locale}-${width}.png`) });
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForFunction(() => getComputedStyle(
+        document.querySelector('.site-title')).visibility === 'hidden');
+    }
+    for (const route of ['/2026/10/17/达科他五日/',
+      '/2026/08/30/Thunderstorm/']) {
+      await page.goto(base + route);
+      assert.ok(await page.locator('.site-title').isVisible());
+      if (width === 1440) {
+        assert.equal(await page.locator('.page__content')
+          .evaluate(element => element.getBoundingClientRect().width), 900);
+      }
+      const links = page.locator('.post-navigation__link');
+      for (const link of await links.all()) {
+        const alignment = await link.evaluate(element => {
+          const arrow = element.querySelector('.post-navigation__direction');
+          const title = element.querySelector('.post-navigation__title');
+          const firstLine = document.createRange();
+          firstLine.selectNodeContents(title);
+          return { arrow: arrow.textContent.trim(),
+            top: arrow.getBoundingClientRect().top,
+            titleTop: firstLine.getClientRects()[0].top };
+        });
+        assert.match(alignment.arrow, /^[←→]$/);
+        assert.ok(Math.abs(alignment.top - alignment.titleTop) < 12,
+          'The arrow shares the first title line');
+      }
+    }
+  }
+  assert.deepEqual(errors, []);
+});
+
 test('pagination, contents, archive fragments, and the native image viewer integrate', async () => {
+  await page.goto(base + '/en/');
+  assert.equal(await page.locator('.journal-feature h2').innerText(),
+    'Thunderstorm');
+  assert.equal(await page.locator('.journal-entry h2').first().innerText(),
+    'What I Still Ask of Life');
+  assert.equal(await page.locator('.journal-entry h2')
+    .filter({ hasText: /^Thunderstorm$/ }).count(), 0);
+  await page.locator('.journal-feature__link').click();
+  await page.waitForURL('**/2026/08/30/Thunderstorm/');
   await page.goto(base + '/zh/');
+  assert.equal(await page.locator('.journal-feature h2').innerText(),
+    '达科他五日');
   await page.locator('.pagination').getByRole('link', { name: '2', exact: true }).click();
   await page.waitForURL('**/zh/p/2/#posts');
   assert.equal(await page.locator('.journal-feature').count(), 0);

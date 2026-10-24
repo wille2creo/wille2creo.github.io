@@ -65,7 +65,8 @@ test('every generated local link, fragment, image, and preload resolves', async 
       }
       if (!document.body.classList.contains('layout--home')) continue;
       const entries = [...document.querySelectorAll('.journal-feature,.journal-entry')];
-      const dates = entries.map(entry => entry.querySelector('time').dateTime);
+      const dates = [...document.querySelectorAll('.journal-entry')]
+        .map(entry => entry.querySelector('time').dateTime);
       assert.deepEqual(dates, [...dates].sort().reverse(), `${route}: chronology`);
       const links = entries.map(entry => entry.querySelector('a').getAttribute('href'));
       assert.equal(new Set(links).size, links.length, `${route}: repeated entry`);

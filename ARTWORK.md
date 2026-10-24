@@ -136,14 +136,18 @@ and clear names such as `trace.svg`, `plate.light.webp`, and `plate.dark.webp`.
 Photos can remain in the normal photo folders. Add implementation only when
 a real work needs it.
 
-## Chronological home preview
+## Home preview and chronology
 
-Each language's home listing follows publication dates, newest first.
-Only the newest visible article on the first page can lead with artwork,
-and only when it explicitly sets `artwork.home_preview: true`. An older
-illustrated post never moves ahead of newer writing. If the latest article
-has no enabled artwork, it stays a text entry. Later entries and pagination
-continue in date order.
+Each language's first home page leads with its most recent visible article
+that has artwork and explicitly sets `artwork.home_preview: true`, even when
+newer articles have no artwork. The image remains paired with its own title,
+date, and article link, without an extra editorial label.
+
+The remaining articles follow publication dates, newest first, across the
+listing and later pages. Exclude the lead article from that sequence so it
+appears only once. The lead counts toward the first page's entry limit;
+pagination keeps the same page size and total article count. If a language
+has no enabled artwork, its entire listing stays in date order.
 
 The lead uses `artwork.preview` when provided, otherwise the main artwork.
 A preview can have its own `type`, light asset, optional dark edition, and

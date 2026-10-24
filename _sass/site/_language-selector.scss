@@ -11,19 +11,6 @@
   margin: 0;
   padding: 0;
 }
-.language-selector__author {
-  position: absolute;
-  z-index: 2;
-  top: 32px;
-  left: 38px;
-  margin: 0;
-  color: #242b28;
-  font-family: var(--font-serif);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  letter-spacing: 0.15em;
-}
 .language-selector {
   position: relative;
   display: grid;
@@ -53,7 +40,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 32px;
   min-width: 0;
   min-height: 100svh;
   padding: 100px 24px;
@@ -97,28 +83,6 @@
   letter-spacing: 0.04em;
   line-height: 0.81;
 }
-.language-selector__label {
-  padding-bottom: 6px;
-  border-bottom: 1px solid currentColor;
-  font-family: var(--font-serif);
-  font-size: 18px;
-  line-height: 1.5;
-  transition: border-color 200ms ease;
-}
-.language-selector__motto {
-  position: absolute;
-  bottom: 32px;
-  left: 38px;
-  font-family: "Blog Latin Motto", serif;
-  font-size: 16px;
-  letter-spacing: 0.04em;
-}
-.language-selector__choice--zh .language-selector__motto {
-  right: 38px;
-  left: auto;
-  font-family: "Blog Motto", serif;
-  letter-spacing: 0.12em;
-}
 .language-selector__choice:hover {
   color: #315b4e;
 }
@@ -142,27 +106,15 @@
   .language-selector__choice:visited {
     min-height: 50svh;
     padding: 70px 24px;
-    gap: 20px;
   }
   .language-selector::after {
     width: min(200vw, 88svh);
-  }
-  .language-selector__author {
-    top: 20px;
-    left: 24px;
-    font-size: 13px;
   }
   .language-selector__name {
     font-size: clamp(66px, 15vw, 100px);
   }
   .language-selector__choice--zh .language-selector__name {
     font-size: 112px;
-  }
-  .language-selector__label {
-    font-size: 15px;
-  }
-  .language-selector__motto {
-    display: none;
   }
 }
 

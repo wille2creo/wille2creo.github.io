@@ -5,7 +5,10 @@
 {% endcomment %}
 {% assign language = site.data.languages[locale] %}
 
-<div class="masthead">
+<div class="masthead"
+  {% if page.layout == 'home' and paginator.page == 1 %}
+    data-home-masthead data-intro-visible
+  {% endif %}>
   <div class="masthead__inner-wrap">
     <div class="masthead__menu">
       <nav id="site-nav" class="site-nav"

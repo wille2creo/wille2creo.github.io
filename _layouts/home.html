@@ -1,16 +1,30 @@
 ---
 layout: default
 ---
-{% assign entries = paginator.posts
+{% assign posts = site.posts
   | where: "locale", page.locale
-  | where_exp: "post", "post.hidden != true" %}
-{% assign latest = entries | first %}
+  | where_exp: "post", "post.hidden != true"
+  | sort: "date" | reverse %}
 {% assign featured = nil %}
-{% unless paginator.page > 1 %}
-  {% if latest.artwork.home_preview == true and latest.artwork.light %}
-    {% assign featured = latest %}
+{% for post in posts %}
+  {% if post.artwork.home_preview == true and post.artwork.light %}
+    {% assign featured = post %}
+    {% break %}
   {% endif %}
-{% endunless %}
+{% endfor %}
+{% assign entries = posts %}
+{% assign offset = paginator.page | minus: 1 | times: paginator.per_page %}
+{% assign limit = paginator.per_page %}
+{% if featured %}
+  {% assign entries = posts | where_exp: "post", "post.id != featured.id" %}
+  {% comment %}The lead occupies one of the first page's entry slots.{% endcomment %}
+  {% if paginator.page == 1 %}
+    {% assign limit = limit | minus: 1 %}
+  {% else %}
+    {% assign offset = offset | minus: 1 %}
+  {% endif %}
+{% endif %}
+{% assign entries = entries | slice: offset, limit %}
 <div id="main" role="main"
   {% if paginator.page > 1 %}class="journal-continuation"{% endif %}>
   {% if paginator.page > 1 %}
@@ -18,12 +32,13 @@ layout: default
   {% endif %}
   {{ content }}
   <div id="posts" class="post-list-anchor"></div>
-  {% if featured %}
-    {% include journal-feature.html post=featured %}
-  {% endif %}
+  {% unless paginator.page > 1 %}
+    {% if featured %}
+      {% include journal-feature.html post=featured %}
+    {% endif %}
+  {% endunless %}
   <div class="journal-entries">
     {% for post in entries %}
-      {% if post.id == featured.id %}{% continue %}{% endif %}
       {% include journal-entry.html post=post %}
     {% endfor %}
   </div>

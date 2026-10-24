@@ -128,5 +128,10 @@ its color in both modes. Shared color tokens live in `_sass/site/_tokens.scss`;
 ## Published assets
 
 The shared head links the root favicon, PNG favicon sizes, and Apple touch icon.
+All languages use the same paper-white “之” on deep green. The mark retains
+the Alimama DaoLiTi glyph with balanced margins. `assets/favicon.svg` is the
+master; `assets/favicon-16x16.svg` slightly enlarges and thickens the mark for
+16px. The ICO embeds the dedicated 16px PNG alongside 32px and 48px editions.
+Icon links carry a version query so browsers can refresh cached favicons.
 Font subsets and their licenses are published; font provenance documentation is
 excluded from the site. There is no web app manifest or standalone app mode.

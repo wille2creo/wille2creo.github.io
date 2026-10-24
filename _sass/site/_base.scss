@@ -86,14 +86,14 @@ button:focus-visible {
 }
 
 .page__footer {
-  margin-top: 80px;
+  margin-top: 48px;
   border-top: 1px solid var(--site-line);
 }
 .page__footer footer {
   width: calc(100% - var(--site-gutter) * 2);
   max-width: var(--site-width);
   margin-inline: auto;
-  padding: 28px 0;
+  padding: 16px 0;
 }
 .page__footer-copyright {
   color: var(--site-muted);
@@ -106,8 +106,10 @@ button:focus-visible {
 }
 .pagination ul {
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
   gap: 4px;
+  margin: 0;
 }
 .pagination li {
   margin: 0;
@@ -167,10 +169,23 @@ hr {
     padding: 12px 0;
   }
   .page__footer {
-    margin-top: 48px;
+    margin-top: 32px;
   }
   .pagination {
     margin-top: 32px;
+  }
+  .pagination ul {
+    gap: 0;
+  }
+  .pagination li a,
+  .pagination li span {
+    min-width: 30px;
+    padding-inline: 6px;
+  }
+  .pagination li .current {
+    min-height: 30px;
+    margin-block: 7px;
+    padding-block: 0;
   }
 }
 

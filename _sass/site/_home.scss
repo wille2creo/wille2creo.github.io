@@ -235,7 +235,10 @@ html[lang="zh-CN"] .journal-entry h2 {
 }
 
 .layout--home .pagination {
-  margin-bottom: 32px;
+  margin-block: 32px 0;
+}
+.layout--home .page__footer {
+  margin-top: 32px;
 }
 .layout--home #main.journal-continuation {
   padding-top: 50px;

@@ -11,7 +11,7 @@ Later I studied in Shanghai and New York, and lived for a while in Chicago and B
 
 Over the years, some of the writing I wanted to keep and share has gradually found its way here. Most of it began without a subject in mind.
 
-The homepage suggests a book lying open on a writing desk: a handwritten note and a line beside the title, with space around the words. It is a title page of sorts, before the writing begins.
+The homepage evokes a sheet of letter on a writing desk. Two lines sit beside the title, their strokes varying in weight, against the faintest wash of green. Perhaps it is like opening a letter: a quiet greeting in the words, and then you read on.
 
 *Übersicht* is German for “overview”. The name owes something to Wittgenstein’s idea of a perspicuous presentation: an arrangement that makes connections visible. Writing sometimes works this way. Something familiar, set beside something else, begins to look different.  
 Beside it is *amor fati* — love of fate. I take it not as resignation to what has happened or a claim that everything was for the best, but as an affirmation through which a life becomes one’s own. Only then does fate become fate. It is less a conclusion than a beginning.<br>

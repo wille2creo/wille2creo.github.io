@@ -47,6 +47,22 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     applyTheme();
+    const masthead = document.querySelector('[data-home-masthead]');
+    const intro = document.querySelector('.site-intro');
+    if (masthead && intro) {
+      let introVisible = true;
+      const syncBrand = () => masthead.toggleAttribute('data-intro-visible',
+        introVisible && !document.querySelector('.initial-content').hidden);
+      const observer = new IntersectionObserver(([entry]) => {
+        introVisible = entry.isIntersecting;
+        syncBrand();
+      }, { rootMargin: `-${masthead.offsetHeight}px 0px 0px` });
+      observer.observe(intro);
+      new MutationObserver(syncBrand).observe(
+        document.querySelector('.initial-content'),
+        { attributes: true, attributeFilter: ['hidden'] }
+      );
+    }
     document.querySelectorAll('[data-theme-switch]').forEach((button) => {
       button.addEventListener('click', () => {
         choice = modes[(modes.indexOf(choice) + 1) % modes.length];

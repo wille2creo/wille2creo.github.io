@@ -183,11 +183,9 @@ html[lang="zh-CN"] .journal-feature__body h2 {
   transform: rotate(-35deg);
 }
 
-.journal-entry {
+.journal-entry + .journal-entry,
+.journal-feature + .journal-entries > .journal-entry:first-child {
   border-top: 1px solid var(--site-line);
-}
-.journal-entry:last-child {
-  border-bottom: 1px solid var(--site-line);
 }
 .journal-entry__link {
   display: grid;
@@ -234,8 +232,12 @@ html[lang="zh-CN"] .journal-entry h2 {
   transform: rotate(-35deg);
 }
 
+.journal-entry:last-child .journal-entry__link {
+  min-height: 0;
+  padding-bottom: 0;
+}
 .layout--home .pagination {
-  margin-block: 32px 0;
+  margin-block: 48px 0;
 }
 .layout--home .page__footer {
   margin-top: 32px;
@@ -286,6 +288,9 @@ html[lang="zh-CN"] .journal-entry h2 {
 }
 
 @media (max-width: 760px) {
+  .layout--home .pagination {
+    margin-top: 32px;
+  }
   .site-intro {
     align-items: flex-start;
     gap: 20px;

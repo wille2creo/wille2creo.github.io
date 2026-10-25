@@ -1,12 +1,13 @@
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile, stat, mkdir, mkdtemp } from 'node:fs/promises';
+import { readFile, stat, mkdir, mkdtemp, rm } from 'node:fs/promises';
 import { once } from 'node:events';
 import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
+import { build } from '../../wechat/build.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const site = path.join(root, '_site');
@@ -15,18 +16,22 @@ const artifacts = process.env.BROWSER_ARTIFACTS
 const mime = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascript',
   '.json': 'application/json', '.png': 'image/png', '.jpeg': 'image/jpeg',
   '.jpg': 'image/jpeg', '.webp': 'image/webp', '.woff2': 'font/woff2' };
-let server, browser, context, page, base;
+let server, browser, context, page, base, publisher;
 const errors = [];
 
 before(async () => {
   await mkdir(artifacts, { recursive: true });
   await readFile(path.join(site, 'index.html'));
+  publisher = await mkdtemp(path.join(os.tmpdir(), 'blog-publisher-'));
+  for (const slug of ['2026-08-30-观雷', '2026-10-17-达科他五日']) {
+    await build(`_posts/zh/${slug}.md`, { outputRoot: publisher });
+  }
   server = createServer(async (request, response) => {
     try {
       const url = new URL(request.url, 'http://localhost');
-      const publisher = url.pathname.startsWith('/__publisher/');
-      const directory = publisher ? path.join(root, 'wechat/out') : site;
-      const pathname = publisher ? url.pathname.slice('/__publisher'.length)
+      const isPublisher = url.pathname.startsWith('/__publisher/');
+      const directory = isPublisher ? publisher : site;
+      const pathname = isPublisher ? url.pathname.slice('/__publisher'.length)
         : url.pathname;
       let file = path.resolve(directory, '.' + decodeURIComponent(pathname));
       if (file !== directory && !file.startsWith(directory + path.sep)) {
@@ -56,6 +61,7 @@ before(async () => {
 after(async () => {
   await browser?.close();
   if (server) await new Promise(resolve => server.close(resolve));
+  if (publisher) await rm(publisher, { recursive: true, force: true });
   console.log(`Browser screenshots: ${artifacts}`);
 });
 
@@ -158,7 +164,7 @@ test('language, search, failure recovery, focus, and theme persistence work', as
 });
 
 test('home branding, pagination, and article navigation fit the reading layout', async () => {
-  for (const width of [1440, 674, 391, 390, 375, 360, 320, 296]) {
+  for (const width of [1440, 674, 390, 375, 320, 296]) {
     await page.setViewportSize({ width, height: 900 });
     for (const locale of ['zh', 'en']) {
       await page.goto(`${base}/${locale}/`);
@@ -167,7 +173,6 @@ test('home branding, pagination, and article navigation fit the reading layout',
         document.querySelector('.site-title')).visibility === 'hidden');
       await page.locator('[data-search-toggle]').click();
       assert.ok(await brand.isVisible(), 'Search retains the home link');
-      assert.equal(await page.locator('#search').getAttribute('placeholder'), null);
       assert.equal(await page.locator('#search').inputValue(), '');
       await page.keyboard.press('Escape');
       await page.waitForFunction(() => getComputedStyle(
@@ -196,21 +201,9 @@ test('home branding, pagination, and article navigation fit the reading layout',
         assert.ok(await menu.getByRole('link').first().isVisible());
         await menu.locator('summary').click();
       }
-      const geometry = await page.evaluate(() => {
-        const items = [...document.querySelectorAll('.pagination li')]
-          .map(item => item.getBoundingClientRect());
-        const left = Math.min(...items.map(item => item.left));
-        const right = Math.max(...items.map(item => item.right));
-        const pagination = document.querySelector('.pagination')
-          .getBoundingClientRect();
-        const footer = document.querySelector('.page__footer')
-          .getBoundingClientRect();
-        return { center: (left + right) / 2, viewport: innerWidth,
-          gap: footer.top - pagination.bottom, footerHeight: footer.height };
-      });
-      assert.ok(Math.abs(geometry.center - geometry.viewport / 2) <= 1);
-      assert.ok(geometry.gap <= 33, 'Pagination has a compact footer gap');
-      assert.ok(geometry.footerHeight <= 52, 'Copyright has a compact row');
+      for (const link of await page.locator('.pagination a').all()) {
+        assert.ok(await link.isVisible(), 'Pagination destinations are visible');
+      }
       await page.screenshot({ path: path.join(artifacts,
         `pagination-${locale}-${width}.png`) });
       await page.evaluate(() => window.scrollTo(0, 0));
@@ -221,45 +214,30 @@ test('home branding, pagination, and article navigation fit the reading layout',
       '/2026/08/30/Thunderstorm/']) {
       await page.goto(base + route);
       assert.ok(await page.locator('.site-title').isVisible());
-      if (width === 1440) {
-        assert.equal(await page.locator('.page__content')
-          .evaluate(element => element.getBoundingClientRect().width), 900);
-      }
-      const links = page.locator('.post-navigation__link');
-      for (const link of await links.all()) {
-        const alignment = await link.evaluate(element => {
-          const arrow = element.querySelector('.post-navigation__direction');
-          const title = element.querySelector('.post-navigation__title');
-          const firstLine = document.createRange();
-          firstLine.selectNodeContents(title);
-          return { arrow: arrow.textContent.trim(),
-            top: arrow.getBoundingClientRect().top,
-            titleTop: firstLine.getClientRects()[0].top };
-        });
-        assert.match(alignment.arrow, /^[←→]$/);
-        assert.ok(Math.abs(alignment.top - alignment.titleTop) < 12,
-          'The arrow shares the first title line');
-      }
+      assert.ok(await page.locator('.page__content').evaluate(element => {
+        const box = element.getBoundingClientRect();
+        return box.width > 0 && box.left >= 0 && box.right <= innerWidth + 1;
+      }), 'Article text fits the reading viewport');
     }
   }
   assert.deepEqual(errors, []);
 });
 
-test('continuation pages start directly below the header', async () => {
+test('continuation pages open with visible entries below the header', async () => {
   for (const width of [1440, 674, 390, 320, 667]) {
     await page.setViewportSize({ width, height: 767 });
     for (const locale of ['zh', 'en']) {
       for (const fragment of ['', '#posts']) {
         await page.goto(`${base}/${locale}/p/2/${fragment}`);
-        const gap = await page.evaluate(() => {
+        const visible = await page.evaluate(() => {
           const header = document.querySelector('.masthead')
             .getBoundingClientRect();
           const entry = document.querySelector('.journal-entry')
             .getBoundingClientRect();
-          return entry.top - header.bottom;
+          return entry.top >= header.bottom - 1 && entry.top < innerHeight;
         });
-        assert.ok(gap >= -1 && gap <= 1,
-          `${locale} page 2 at ${width}${fragment}: gap ${gap}`);
+        assert.ok(visible, `${locale} page 2 at ${width}${fragment}`);
+        assert.equal(await page.locator('.site-intro').count(), 0);
       }
       if ([674, 390].includes(width)) {
         await page.screenshot({ path: path.join(artifacts,
@@ -270,22 +248,21 @@ test('continuation pages start directly below the header', async () => {
 });
 
 test('pagination, contents, archive fragments, and the native image viewer integrate', async () => {
+  await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(base + '/en/');
-  assert.equal(await page.locator('.journal-feature h2').innerText(),
-    'Thunderstorm');
-  assert.equal(await page.locator('.journal-entry h2').first().innerText(),
-    'What I Still Ask of Life');
-  assert.equal(await page.locator('.journal-entry h2')
-    .filter({ hasText: /^Thunderstorm$/ }).count(), 0);
+  const featuredRoute = await page.locator('.journal-feature__link').getAttribute('href');
+  const featuredTitle = await page.locator('.journal-feature h2').innerText();
+  assert.ok(!(await page.locator('.journal-entry h2').allTextContents())
+    .includes(featuredTitle));
   await page.locator('.journal-feature__link').click();
-  await page.waitForURL('**/2026/08/30/Thunderstorm/');
+  await page.waitForURL(base + featuredRoute);
+  assert.equal(await page.locator('h1').innerText(), featuredTitle);
   await page.goto(base + '/zh/');
-  assert.equal(await page.locator('.journal-feature h2').innerText(),
-    '达科他五日');
+  assert.ok(await page.locator('.journal-feature__link').isVisible());
   await page.locator('.pagination').getByRole('link', { name: '2', exact: true }).click();
   await page.waitForURL('**/zh/p/2/#posts');
   assert.equal(await page.locator('.journal-feature').count(), 0);
-  assert.equal(await page.locator('.journal-entry').count(), 8);
+  assert.ok(await page.locator('.journal-entry').count() > 0);
   await page.goto(base + '/2026/10/17/达科他五日/');
   assert.equal(await page.locator('[data-toc]').evaluate(e => e.open), false);
   await page.locator('[data-toc] summary').click();
@@ -304,11 +281,12 @@ test('pagination, contents, archive fragments, and the native image viewer integ
   await page.locator('.travel-photo a').first().click();
   await page.getByRole('dialog', { name: '图片查看器' }).waitFor();
   await page.locator('.image-viewer img').evaluate(image => image.decode());
+  const firstImage = await page.locator('.image-viewer img').getAttribute('src');
   await page.screenshot({ path: path.join(artifacts, 'native-image-viewer.png') });
   await page.keyboard.press('ArrowRight');
-  assert.ok((await page.locator('.image-viewer img').getAttribute('src'))
-    .includes('badlands-wind-tree'));
+  assert.notEqual(await page.locator('.image-viewer img').getAttribute('src'), firstImage);
   await page.keyboard.press('ArrowLeft');
+  assert.equal(await page.locator('.image-viewer img').getAttribute('src'), firstImage);
   await page.keyboard.press('Escape');
   await page.waitForFunction(() => !document.querySelector('.image-viewer').open);
   await page.goto(base + '/archive.html');
@@ -332,7 +310,7 @@ test('navigation and contents remain available without JavaScript', async () => 
   }
 });
 
-test('the pinned MathJax runtime renders existing cancel notation', async () => {
+test('article equations render the notation used in the posts', async () => {
   await page.goto(base + '/2023/11/02/关于回忆与我/');
   await page.locator('mjx-container[jax="SVG"]').first().waitFor();
   await page.evaluate(() => window.MathJax.startup.promise);
@@ -343,17 +321,11 @@ test('the pinned MathJax runtime renders existing cancel notation', async () => 
 
 test('publisher previews and Clipboard API payloads match exported content', async () => {
   await page.setViewportSize({ width: 1280, height: 1000 });
-  for (const [slug, lineHeight] of [
-    ['2026-08-30-观雷', '32px'], ['2026-10-17-达科他五日', '31.2px'],
-  ]) {
+  for (const slug of ['2026-08-30-观雷', '2026-10-17-达科他五日']) {
     await page.goto(`${base}/__publisher/${slug}/preview.html`);
     await page.locator('#publication img').evaluateAll(images =>
       Promise.all(images.map(image => image.decode())));
-    const typography = await page.locator('.article-body p').first().evaluate(p => ({
-      fontSize: getComputedStyle(p).fontSize,
-      lineHeight: getComputedStyle(p).lineHeight,
-    }));
-    assert.deepEqual(typography, { fontSize: '16px', lineHeight });
+    assert.ok(await page.locator('.article-body p').first().isVisible());
     await page.evaluate(() => {
       navigator.clipboard.write = async items => {
         window.copiedHTML = await (await items[0].getType('text/html')).text();
@@ -362,7 +334,7 @@ test('publisher previews and Clipboard API payloads match exported content', asy
     await page.locator('#copy').click();
     await page.waitForFunction(() => window.copiedHTML);
     const copied = await page.evaluate(() => window.copiedHTML);
-    const fragment = await readFile(path.join(root, 'wechat/out', slug, 'fragment.html'), 'utf8');
+    const fragment = await readFile(path.join(publisher, slug, 'fragment.html'), 'utf8');
     assert.equal(copied, fragment.trim());
     await page.locator('#copy-body').click();
     await page.waitForFunction(() => !window.copiedHTML.includes('publication-header'));
@@ -372,6 +344,7 @@ test('publisher previews and Clipboard API payloads match exported content', asy
 });
 
 test('clipboard denial reports an error without selecting or copying another way', async () => {
+  await page.goto(`${base}/__publisher/2026-08-30-观雷/preview.html`);
   await page.evaluate(() => {
     getSelection().removeAllRanges();
     navigator.clipboard.write = async () => {

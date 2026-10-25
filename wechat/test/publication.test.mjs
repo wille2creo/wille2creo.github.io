@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, readFile, rm } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import path from 'node:path';
-import os from 'node:os';
 import { JSDOM } from 'jsdom';
 import { publicationContent } from '../publication.js';
 import { convert } from '../convert.mjs';
@@ -37,44 +36,33 @@ test('one publication policy preserves body headings and restores image URLs', (
   }
 });
 
-test('portrait width is controlled by theme CSS, not build code', async () => {
-  const work = await mkdtemp(path.join(os.tmpdir(), 'wechat-theme-'));
+test('publication images use theme sizing and preserve their full proportions', async () => {
+  const input = '---\ntitle: test\n---\n\n'
+    + '{% include travel-photo.html src="/portrait.jpg" alt="竖幅" width=768 height=1024 %}';
+  const { body } = await convert(input, '2026-01-01-test.md',
+    { url: 'https://example.com' }, root);
+  const dom = new JSDOM(await render(body,
+    'img { width: 100%; height: auto; } .publication-portrait { width: 72%; }'));
   try {
-    const input = '---\ntitle: test\n---\n\n' +
-      '{% include travel-photo.html src="/portrait.jpg" alt="竖幅" width=768 height=1024 %}';
-    const { body } = await convert(input, '2026-01-01-test.md',
-      { url: 'https://example.com' }, root);
-    const css = await Promise.all(['common', 'travel'].map(name =>
-      readFile(path.join(root, `wechat/themes/${name}.css`), 'utf8')));
-    const theme = path.join(work, 'theme.css');
-    const article = path.join(work, 'input.md');
-    await writeFile(theme, css.join('\n').replace('86%', '72%'));
-    await writeFile(article, body);
-    const dom = new JSDOM(await render(article, theme));
-    assert.equal(dom.window.document.querySelector('img.publication-portrait').style.width, '72%');
-    assert.equal(dom.window.document.querySelector('img').style.height, 'auto');
-    dom.window.close();
+    const image = dom.window.document.querySelector('img');
+    assert.equal(image.style.width, '72%');
+    assert.equal(image.style.height, 'auto');
+    assert.equal(image.width, 768);
+    assert.equal(image.height, 1024);
   } finally {
-    await rm(work, { recursive: true, force: true });
+    dom.window.close();
   }
 });
 
-test('MathJax 4 renders the notation used by the posts', async () => {
-  const work = await mkdtemp(path.join(os.tmpdir(), 'wechat-renderer-'));
+test('display and inline equations support the notation used by the posts', async () => {
+  const dom = new JSDOM(await render(
+    '$$\\frac{\\cancel{S}}{s}$$\n\nText $$\\cancel{S}$$ remains inline\n',
+    await readFile(path.join(root, 'wechat/themes/common.css'), 'utf8')));
   try {
-    const article = path.join(work, 'input.md');
-    await writeFile(article,
-      '$$\\frac{\\cancel{S}}{s}$$\n\nText $$\\cancel{S}$$ remains inline\n');
-    const dom = new JSDOM(await render(article,
-      path.join(root, 'wechat/themes/common.css')));
-    try {
-      assert.ok(dom.window.document.querySelector('.block-equation svg'));
-      assert.ok(dom.window.document.querySelector('.inline-equation svg'));
-      assert.equal(dom.window.document.querySelector('[data-mml-node="merror"]'), null);
-    } finally {
-      dom.window.close();
-    }
+    assert.ok(dom.window.document.querySelector('.block-equation svg'));
+    assert.ok(dom.window.document.querySelector('.inline-equation svg'));
+    assert.equal(dom.window.document.querySelector('[data-mml-node="merror"]'), null);
   } finally {
-    await rm(work, { recursive: true, force: true });
+    dom.window.close();
   }
 });

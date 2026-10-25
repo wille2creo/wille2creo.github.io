@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-{%- assign locale = page.locale | default: layout.locale | default: site.locale %}
+{%- assign locale = page.locale | default: site.locale %}
 
 <div id="main" role="main">
   <article class="page h-entry" itemscope itemtype="https://schema.org/CreativeWork"{% if page.locale %} lang="{{ page.locale }}"{% endif %}>

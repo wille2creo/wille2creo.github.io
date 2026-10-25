@@ -2,6 +2,23 @@
 
 Personal Jekyll site published at <https://wille2creo.github.io>.
 
+## Supported use
+
+Readers enter through the language selector, browse language-specific homes
+and archives, and follow permanent article URLs. Navigation, article text,
+contents links, and images are available as static HTML. JavaScript adds local
+search, appearance controls, contents tracking, and the image viewer.
+
+Feed readers consume `/feed.xml`; crawlers and link previews consume the
+sitemap, canonical URLs, and page metadata. Public article URLs and the
+Reading pages at `/zh/now/` and `/en/now/` stay stable as source files change.
+
+The author uses the WeChat CLI to turn Chinese posts into local exports and
+browser previews, then copies the result into the official editor. The
+publisher preserves article content, image order, credits, and public links.
+Its JavaScript modules are internal to this workflow; its supported commands
+and output files are described in [wechat/README.md](wechat/README.md).
+
 ## Structure
 
 - `_posts/zh/` and `_posts/en/`: posts grouped by language, using
@@ -50,13 +67,20 @@ npm run test:browser
 links and language listings, and runs the WeChat publisher's regression tests.
 `npm test` is equivalent. Browser checks start their own loopback server against
 the built site; screenshots go to a temporary directory, or `BROWSER_ARTIFACTS`
-when set. Run `make build` before browser checks after changing source files.
+when set. Publisher checks and browser checks each generate their own exports
+in temporary directories and leave the author's `wechat/out/` bundles intact.
+Run `make build` before browser checks after changing source files.
 
 CI keeps the Jekyll-only build separate from validation with Ruby, Node, and
 Chromium. Deployment requires both jobs to pass. Tests cover search, navigation,
 contents tracking, the native image dialog, language switching, themes,
 responsive layouts, and publisher clipboard behavior. Dependency updates are
 checked weekly through Dependabot.
+
+Checks follow publishing contracts: resolvable navigation and assets, metadata
+and discovery URLs, language isolation, faithful exports, and usable browser
+interactions across desktop and phone viewports. Screenshots support visual
+review; layout checks cover visibility, fit, and access to controls.
 
 The optional [WeChat publishing tool](wechat/README.md) adapts Chinese posts
 into local exports and previews. Exporting requires Node, but does not require
@@ -132,6 +156,7 @@ All languages use the same paper-white “之” on deep green. The mark retains
 the Alimama DaoLiTi glyph with balanced margins. `assets/favicon.svg` is the
 master; `assets/favicon-16x16.svg` slightly enlarges and thickens the mark for
 16px. The ICO embeds the dedicated 16px PNG alongside 32px and 48px editions.
-Icon links carry a version query so browsers can refresh cached favicons.
+Stylesheets, browser scripts, and icon links carry a build version so browsers
+refresh them together after deployment.
 Font subsets and their licenses are published; font provenance documentation is
 excluded from the site. There is no web app manifest or standalone app mode.

@@ -25,13 +25,12 @@ layout: default
   {% endif %}
 {% endif %}
 {% assign entries = entries | slice: offset, limit %}
-<div id="main" role="main"
-  {% if paginator.page > 1 %}class="journal-continuation"{% endif %}>
+<div id="main" role="main">
   {% if paginator.page > 1 %}
     <h1 class="sr-only">{{ page.title }}: {{ paginator.page }}</h1>
   {% endif %}
   {{ content }}
-  <div id="posts" class="post-list-anchor"></div>
+  <div id="posts"></div>
   {% unless paginator.page > 1 %}
     {% if featured %}
       {% include journal-feature.html post=featured %}

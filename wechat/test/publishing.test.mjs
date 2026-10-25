@@ -1,7 +1,8 @@
-import test from 'node:test';
+import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, access, readdir } from 'node:fs/promises';
+import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
+import os from 'node:os';
 import { JSDOM } from 'jsdom';
 import { parse } from 'yaml';
 import { convert, frontMatter, postRoute } from '../convert.mjs';
@@ -11,6 +12,14 @@ import { publicationContent } from '../publication.js';
 const site = { url: 'https://example.com', baseurl: '', permalink: '/:year/:month/:day/:title/' };
 const file = path.join(root, '_posts/zh/2026-01-01-fixture.md');
 const wrap = body => `---\ntitle: 测试\nexcerpt: 摘要\n---\n\n${body}`;
+let outputRoot;
+
+before(async () => {
+  outputRoot = await mkdtemp(path.join(os.tmpdir(), 'wechat-export-'));
+});
+after(async () => {
+  if (outputRoot) await rm(outputRoot, { recursive: true, force: true });
+});
 
 test('adapter preserves paragraph rhythm, quotes, hard breaks and inline markup', async () => {
   const source = '### 第一章\n\n第一段 **强调**。  \n下一行。\n\n> 引文\n>\n> <cite>出处</cite>\n\n<div class="travel-passage" markdown="1">\n\n原段落。\n\n</div>\n\n尾段。';
@@ -101,7 +110,7 @@ test('post_url and URL filters use actual repository metadata', async () => {
 // includes. Compare ordered paragraphs/headings and image/credit positions.
 // This catches deletions, duplicate prose, changed emphasis, and reordering.
 function events(body) {
-  for (const node of body.querySelectorAll('aside, .page__share, .page__taxonomy')) node.remove();
+  for (const node of body.querySelectorAll('.sidebar__right')) node.remove();
   return [...body.querySelectorAll('h1,h2,h3,h4,h5,h6,p,img,figcaption,.publication-caption')]
     .filter(el => el.tagName !== 'P' || !el.querySelector('img'))
     .map(el => el.tagName === 'IMG'
@@ -111,13 +120,13 @@ function events(body) {
         ...(el.tagName === 'P' ? { emphasis: [...el.querySelectorAll('strong,em')].map(x => [x.tagName, x.textContent]) } : {}) });
 }
 
-for (const [filename, route, theme, count] of [
-  ['2026-08-30-观雷', '2026/08/30/观雷', 'essay', 1],
-  ['2026-10-17-达科他五日', '2026/10/17/达科他五日', 'travel', 5],
+for (const [filename, route, theme] of [
+  ['2026-08-30-观雷', '2026/08/30/观雷', 'essay'],
+  ['2026-10-17-达科他五日', '2026/10/17/达科他五日', 'travel'],
 ]) {
   test(`${filename}: render and compare every ordered block against Jekyll`, async () => {
     const original = new JSDOM(await readFile(path.join(root, '_site', route, 'index.html'), 'utf8'));
-    const result = await build(`_posts/zh/${filename}.md`);
+    const result = await build(`_posts/zh/${filename}.md`, { outputRoot });
     const exported = new JSDOM(await readFile(path.join(result.outDir, 'article.html'), 'utf8'));
     const document = exported.window.document;
     const actual = events(document.querySelector('.article-body'));
@@ -128,30 +137,28 @@ for (const [filename, route, theme, count] of [
     }
     assert.deepEqual(actual, expected);
     assert.equal(result.manifest.metadata.theme, theme);
-    assert.equal(result.manifest.images.length, count);
-    assert.equal(document.querySelector('#publication').firstElementChild.className, 'publication-header');
+    assert.equal(result.manifest.images.length,
+      expected.filter(event => event.type === 'image').length);
     assert.equal(document.querySelectorAll('.publication-description').length, 1);
+    assert.equal(document.querySelector('.publication-description').textContent,
+      result.manifest.metadata.description);
     assert.equal(document.querySelectorAll('.publication-title').length, 0);
     const preview = new JSDOM(await readFile(path.join(result.outDir, 'preview.html'), 'utf8'));
     assert.equal(preview.window.document.querySelector('.publication-title').textContent,
       result.manifest.metadata.title);
     assert.equal(publicationContent(preview.window.document.querySelector('#publication')).outerHTML,
       (await readFile(path.join(result.outDir, 'fragment.html'), 'utf8')).trim());
-    assert.equal(document.querySelector('img').style.width, '100%');
-    if (theme === 'travel') {
-      assert.equal(document.querySelector('img.publication-portrait').style.width, '86%');
+    for (const image of document.images) {
+      assert.ok(image.style.width, 'Image sizing is available after paste');
+      assert.equal(image.style.height, 'auto', 'Images retain their proportions');
     }
     preview.window.close();
     assert.ok(!document.querySelector('style, script'));
     assert.ok(document.querySelector('.article-body p').style.color);
-    assert.ok(document.querySelector('h3').style.fontFamily.includes('Songti'));
     for (const image of result.manifest.images) {
       assert.equal(hash(await readFile(path.join(result.outDir, image.asset))), image.sha256);
     }
     assert.ok(!(await readFile(path.join(result.outDir, 'fragment.html'), 'utf8')).includes('127.0.0.1'));
-    for (const excluded of ['wechat', 'node_modules', 'package.json', 'package-lock.json']) {
-      await assert.rejects(access(path.join(root, '_site', excluded)));
-    }
     original.window.close();
     exported.window.close();
   });

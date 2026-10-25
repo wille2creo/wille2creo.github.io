@@ -14,13 +14,13 @@
     href="{{ '/assets/fonts/blog-brand-en.woff2' | relative_url }}">
 {% endif %}
 <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48"
-  href="{{ '/favicon.ico' | relative_url }}?v=zhi-1">
+  href="{{ '/favicon.ico' | relative_url }}?v={{ asset_version }}">
 <link rel="icon" type="image/png" sizes="32x32"
-  href="{{ '/assets/favicon-32x32.png' | relative_url }}?v=zhi-1">
+  href="{{ '/assets/favicon-32x32.png' | relative_url }}?v={{ asset_version }}">
 <link rel="icon" type="image/png" sizes="16x16"
-  href="{{ '/assets/favicon-16x16.png' | relative_url }}?v=zhi-1">
+  href="{{ '/assets/favicon-16x16.png' | relative_url }}?v={{ asset_version }}">
 <link rel="apple-touch-icon" sizes="180x180"
-  href="{{ '/assets/apple-touch-icon.png' | relative_url }}?v=zhi-1">
+  href="{{ '/assets/apple-touch-icon.png' | relative_url }}?v={{ asset_version }}">
 <meta id="theme-color-light" name="theme-color" content="#f2f3ef"
   media="(prefers-color-scheme: light)">
 <meta id="theme-color-dark" name="theme-color" content="#19241f"
@@ -29,15 +29,15 @@
   src="{{ '/assets/js/site-controls.js' | relative_url }}?v={{ asset_version }}">
 </script>
 {% if site.search and page.layout != 'language-selector' %}
-  <script src="{{ '/assets/js/site-search.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/site-search.js' | relative_url }}?v={{ asset_version }}" defer></script>
 {% endif %}
 {% if page.mathjax %}
-  <script src="{{ '/assets/js/mathjax-config.js' | relative_url }}"></script>
+  <script src="{{ '/assets/js/mathjax-config.js' | relative_url }}?v={{ asset_version }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@{{ site.data.dependencies.mathjax }}/tex-svg.js"
     defer></script>
 {% endif %}
 {% if page.layout == 'single' %}
-  <script src="{{ '/assets/js/site-article.js' | relative_url }}" defer
+  <script src="{{ '/assets/js/site-article.js' | relative_url }}?v={{ asset_version }}" defer
     data-permalink="{{ site.data.ui-text[locale].permalink_label }}"
     data-viewer="{{ site.data.ui-text[locale].image_viewer_label }}"
     data-close="{{ site.data.ui-text[locale].image_close_label }}"

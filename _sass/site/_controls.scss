@@ -128,9 +128,7 @@
   box-shadow: none;
 }
 
-.search-content[data-search-panel]:not([hidden]) {
-  display: block;
-  visibility: visible;
+.search-content {
   flex: 1;
 }
 
@@ -151,7 +149,6 @@
   line-height: 1.3;
 }
 
-.search-content .search-input::placeholder,
 .search-content .results__found {
   color: var(--site-muted);
   opacity: 1;
@@ -327,15 +324,9 @@
 }
 
 @media (max-width: 360px) {
-  html[lang="en"] .layout--home .masthead .site-title {
-    font-size: 24px;
-  }
   .layout--home .masthead {
     .masthead__inner-wrap {
       width: calc(100% - 24px);
-    }
-    .site-title {
-      font-size: 24px;
     }
   }
 }

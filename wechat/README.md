@@ -39,7 +39,8 @@ Ctrl+C 停止服务；其他已生成的文章也可以通过同一服务浏览�
 ## 结构与输出
 
 - `convert.mjs`：解析文章元数据和使用中的 Jekyll 图片、链接语法。
-- `render.mjs`：Marked 解析 Markdown，MathJax 4 排版公式，css-inline 内联主题 CSS。
+- `render.mjs`：接收 Markdown 和主题 CSS，使用 Marked、MathJax 和 css-inline
+  生成带内联样式的正文。
 - `build.mjs`：编排转换、图片打包、导出与预览。
 - `bundle.mjs`：完整生成后才替换正式目录，失败时恢复上一份完整产物。
 - `publication.js`：统一导出、复制按钮与选区复制的内容规则。
@@ -76,5 +77,7 @@ npm run wechat:test
 ```
 
 检查先重建 Jekyll，再对照实际文章地址、段落、强调、图片、署名和顺序。
-同时验证元数据、资源散列、主题 CSS、公式、未知语法报错、产物替换与网站隔离。
+同时验证元数据、资源散列、主题样式、公式、未知语法报错和完整产物替换。
+测试产物位于独立临时目录，不改写作者的 `wechat/out/`；浏览器检查也自行生成
+临时预览，可在 `make build` 后独立运行。
 完整网站与浏览器检查见根目录 [README](../README.md)。

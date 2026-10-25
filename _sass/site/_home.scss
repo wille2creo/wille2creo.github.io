@@ -78,9 +78,6 @@ html[lang="en"] .site-intro h1 {
   transform: rotate(-3deg);
 }
 
-.post-list-anchor {
-  scroll-margin-top: 0;
-}
 .journal-feature {
   margin-bottom: 40px;
 }
@@ -241,9 +238,6 @@ html[lang="zh-CN"] .journal-entry h2 {
 }
 .layout--home .page__footer {
   margin-top: 32px;
-}
-.layout--home #main.journal-continuation {
-  padding-top: 0;
 }
 
 @keyframes journal-arrive {

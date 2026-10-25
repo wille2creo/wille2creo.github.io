@@ -62,7 +62,9 @@ function checkContent(document) {
   }
 }
 
-export async function build(article, requestedTheme) {
+export async function build(article, {
+  theme: requestedTheme, outputRoot = outRoot,
+} = {}) {
   const file = await realpath(path.resolve(root, article));
   if (!file.startsWith(path.join(root, '_posts/zh') + path.sep) || !file.endsWith('.md')) {
     throw new Error('请选择 _posts/zh/ 内的 Markdown 文章');
@@ -73,7 +75,7 @@ export async function build(article, requestedTheme) {
   const theme = requestedTheme ?? converted.metadata.theme;
   if (!['essay', 'travel'].includes(theme)) throw new Error('主题只能是 essay 或 travel');
   const slug = path.basename(file, '.md');
-  const outDir = path.join(outRoot, slug);
+  const outDir = path.join(outputRoot, slug);
   const manifest = await publishBundle(outDir, staging =>
     writeBundle(staging, { source, file, converted, theme }));
   return { outDir, slug, manifest };
@@ -95,7 +97,7 @@ async function writeBundle(outDir, { source, file, converted, theme }) {
   await writeFile(inputFile, markdown);
   await writeFile(path.join(outDir, 'body.md'), converted.body);
   await writeFile(themeFile, css);
-  const dom = new JSDOM(await render(inputFile, themeFile));
+  const dom = new JSDOM(await render(markdown, css));
   try {
     const document = dom.window.document;
     checkContent(document);

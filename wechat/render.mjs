@@ -19,10 +19,7 @@ const { devDependencies } = JSON.parse(await readFile(
 export const renderer = Object.fromEntries(['marked', '@css-inline/css-inline', '@mathjax/src']
   .map(name => [name, devDependencies[name]]));
 
-export async function render(inputFile, themeFile) {
-  const [markdown, css] = await Promise.all([
-    readFile(inputFile, 'utf8'), readFile(themeFile, 'utf8'),
-  ]);
+export async function render(markdown, css) {
   const html = `<section id="publication">${marked.parse(markdown)}</section>`;
   const dom = new JSDOM(html);
   try {

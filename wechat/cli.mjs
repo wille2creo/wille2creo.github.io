@@ -20,7 +20,7 @@ try {
     }
     const port = Number(values.port);
     if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error('端口应为 0–65535');
-    const result = await build(article, values.theme);
+    const result = await build(article, { theme: values.theme });
     console.log(`已导出：${result.outDir}\n主题：${result.manifest.metadata.theme}；正文图片：${result.manifest.images.length}`);
     if (command === 'preview') {
       const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8',

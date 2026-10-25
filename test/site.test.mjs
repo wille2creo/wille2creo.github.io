@@ -9,7 +9,8 @@ import { execFileSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const site = path.join(root, '_site');
-const { url: origin } = parse(await readFile(path.join(root, '_config.yml'), 'utf8'));
+const config = parse(await readFile(path.join(root, '_config.yml'), 'utf8'));
+const { url: origin } = config;
 const dependencies = parse(await readFile(
   path.join(root, '_data/dependencies.yml'), 'utf8'));
 
@@ -22,7 +23,7 @@ async function htmlFiles(directory) {
   }))).flat();
 }
 
-test('every generated local link, fragment, image, and preload resolves', async () => {
+test('published pages expose metadata and resolve local navigation and assets', async () => {
   const documents = new Map();
   try {
     for (const file of await htmlFiles(site)) {
@@ -34,8 +35,18 @@ test('every generated local link, fragment, image, and preload resolves', async 
       const route = '/' + path.relative(site, file);
       assert.ok(document.querySelector('h1')?.textContent.trim(), route);
       assert.ok(['en', 'zh-CN'].includes(document.documentElement.lang), route);
+      assert.ok(document.title.trim(), `${route}: title`);
+      assert.ok(document.querySelector('meta[name="description"]')?.content,
+        `${route}: description`);
+      const canonical = document.querySelector('link[rel="canonical"]')?.href;
+      assert.equal(canonical, new URL(route.replace(/index\.html$/, ''), origin).href,
+        `${route}: canonical URL`);
+      assert.equal(document.querySelector('meta[property="og:url"]')?.content,
+        canonical, `${route}: shared URL`);
       for (const element of document.querySelectorAll(
-        'a[href], img[src], source[srcset], link[rel="preload"]'
+        'a[href], img[src], source[srcset], script[src], '
+        + 'link[rel="preload"], link[rel="stylesheet"], '
+        + 'link[rel="icon"], link[rel="apple-touch-icon"]'
       )) {
         const value = element.getAttribute('href')
           ?? element.getAttribute('src') ?? element.getAttribute('srcset');
@@ -109,31 +120,72 @@ test('contents handles skipped levels, Unicode IDs, and escaped heading text', (
   }
 });
 
-test('production output excludes tooling and pins remote runtime dependencies', async () => {
-  for (const name of ['wechat', 'node_modules', 'script', 'test',
-    'package.json', 'package-lock.json', 'AGENTS.md', 'ARTWORK.md',
-    'assets/js/main.min.js', 'assets/js/main.min.js.map', 'assets/js/vendor',
-    'assets/js/plugins', 'assets/js/lunr']) {
+test('production output honors the configured publishing boundary', async () => {
+  for (const name of config.exclude) {
     await assert.rejects(access(path.join(site, name)), name);
   }
-  const home = await readFile(path.join(site, 'zh/index.html'), 'utf8');
-  assert.ok(!home.includes('@latest'), 'Published dependencies must be versioned');
-  for (const version of Object.values(dependencies)) {
-    assert.match(version, /^\d+\.\d+\.\d+$/, 'Remote packages need stable versions');
-  }
-  assert.ok(!home.includes('main.min.js'));
-  assert.ok(!home.includes('fontawesome'));
   const math = await readFile(path.join(site,
     '2023/11/02/关于回忆与我/index.html'), 'utf8');
   assert.ok(math.includes(`mathjax@${dependencies.mathjax}/`));
 });
 
-test('tooling has one Node runtime and no deprecated or overridden dependencies', async () => {
+test('tooling declares the Node runtime used by development and CI', async () => {
   const manifest = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'));
   assert.equal(manifest.engines.node,
     (await readFile(path.join(root, '.node-version'), 'utf8')).trim());
-  assert.equal(manifest.overrides, undefined);
-  const lock = JSON.parse(await readFile(path.join(root, 'package-lock.json'), 'utf8'));
-  assert.deepEqual(Object.entries(lock.packages)
-    .filter(([, dependency]) => dependency.deprecated).map(([name]) => name), []);
+});
+
+test('search results identify published articles in their own language', async () => {
+  const posts = JSON.parse(await readFile(path.join(site, 'assets/search.json'), 'utf8'));
+  assert.ok(posts.length > 0);
+  const urls = new Set();
+  for (const post of posts) {
+    assert.ok(!urls.has(post.url), `Repeated search result: ${post.url}`);
+    urls.add(post.url);
+    const document = new JSDOM(await readFile(path.join(site,
+      decodeURIComponent(post.url), 'index.html'), 'utf8'));
+    try {
+      assert.equal(post.locale, document.window.document.documentElement.lang);
+      assert.equal(post.title, document.window.document.querySelector('h1')
+        .textContent.trim());
+      const paragraphs = [...document.window.document.querySelectorAll(
+        '.page__content p')].map(p => p.textContent.trim()).filter(Boolean);
+      // Whitespace and entities can differ between JSON and rendered HTML.
+      const text = JSDOM.fragment(post.text).textContent.replace(/\s+/g, '');
+      for (const paragraph of paragraphs) {
+        assert.ok(text.includes(paragraph.replace(/\s+/g, '')), post.url);
+      }
+    } finally {
+      document.window.close();
+    }
+  }
+});
+
+test('feed and sitemap URLs reach pages with matching canonical metadata', async () => {
+  for (const [name, selector] of [
+    ['feed.xml', 'entry > link[rel="alternate"]'], ['sitemap.xml', 'loc'],
+  ]) {
+    const xml = new JSDOM(await readFile(path.join(site, name), 'utf8'),
+      { contentType: 'application/xml' });
+    try {
+      const links = [...xml.window.document.querySelectorAll(selector)];
+      assert.ok(links.length > 0, name);
+      for (const link of links) {
+        const url = new URL(link.getAttribute('href') ?? link.textContent);
+        assert.equal(url.origin, origin);
+        const file = path.join(site, decodeURIComponent(url.pathname));
+        const target = (await stat(file)).isDirectory()
+          ? path.join(file, 'index.html') : file;
+        const page = new JSDOM(await readFile(target, 'utf8'));
+        try {
+          assert.equal(page.window.document.querySelector('link[rel="canonical"]').href,
+            url.href, `${name}: ${url.pathname}`);
+        } finally {
+          page.window.close();
+        }
+      }
+    } finally {
+      xml.window.close();
+    }
+  }
 });

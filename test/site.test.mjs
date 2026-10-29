@@ -35,6 +35,12 @@ test('published pages expose metadata and resolve local navigation and assets', 
       const route = '/' + path.relative(site, file);
       assert.ok(document.querySelector('h1')?.textContent.trim(), route);
       assert.ok(['en', 'zh-CN'].includes(document.documentElement.lang), route);
+      const search = document.querySelector('#search');
+      if (search) {
+        const index = `/assets/search-${document.documentElement.lang}.json`;
+        assert.equal(search.dataset.index, index, `${route}: search locale`);
+        await access(path.join(site, index));
+      }
       assert.ok(document.title.trim(), `${route}: title`);
       assert.ok(document.querySelector('meta[name="description"]')?.content,
         `${route}: description`);
@@ -138,6 +144,12 @@ test('tooling declares the Node runtime used by development and CI', async () =>
 test('search results identify published articles in their own language', async () => {
   const posts = JSON.parse(await readFile(path.join(site, 'assets/search.json'), 'utf8'));
   assert.ok(posts.length > 0);
+  for (const locale of Object.keys(parse(await readFile(
+    path.join(root, '_data/languages.yml'), 'utf8')))) {
+    const localized = JSON.parse(await readFile(path.join(site,
+      `assets/search-${locale}.json`), 'utf8'));
+    assert.deepEqual(localized, posts.filter(post => post.locale === locale));
+  }
   const urls = new Set();
   for (const post of posts) {
     assert.ok(!urls.has(post.url), `Repeated search result: ${post.url}`);

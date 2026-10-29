@@ -1,10 +1,11 @@
 {% assign locale = include.locale | default: site.locale %}
 {% assign labels = site.data.ui-text[locale] %}
+{% assign search_index = '/assets/search-' | append: locale | append: '.json' %}
 <div class="search-content__inner-wrap">
   <form class="search-content__form" role="search">
     <label class="sr-only" for="search">{{ labels.search_label_text }}</label>
     <input type="search" id="search" class="search-input"
-      data-index="{{ '/assets/search.json' | relative_url }}"
+      data-index="{{ search_index | relative_url }}"
       data-locale="{{ locale }}" data-loading="{{ labels.search_loading }}"
       data-error="{{ labels.search_error }}"
       data-count="{{ labels.search_count }}" autocomplete="off">

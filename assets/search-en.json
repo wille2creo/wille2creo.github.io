@@ -1,0 +1,4 @@
+---
+layout: none
+---
+{% include search/index.json locale="en" %}

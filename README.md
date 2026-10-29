@@ -134,8 +134,10 @@ year; omit later repeats. Use English titles and author names in English.
 The existing `/zh/now/` and `/en/now/` URLs remain stable.
 
 Search uses a local panel with substring matching for Chinese
-and English. `assets/search.json` indexes post titles and full content at build
-time; `assets/js/site-search.js` searches within the current locale. Multiple
+and English. Locale-specific `assets/search-en.json` and
+`assets/search-zh-CN.json` index post titles and full content at build time;
+`assets/js/site-search.js` fetches only the current locale. The complete
+`assets/search.json` remains available. Multiple
 space-separated terms must all match. Set `search: false` on a post to omit it.
 
 ## Appearance

@@ -132,12 +132,12 @@ test('language, search, failure recovery, focus, and theme persistence work', as
   assert.equal(await toggle.getAttribute('aria-label'), '搜索文章');
   assert.ok(await toggle.evaluate(element => element === document.activeElement));
   await page.reload();
-  await page.route('**/assets/search.json', route => route.fulfill({ status: 503 }));
+  await page.route('**/assets/search-zh-CN.json', route => route.fulfill({ status: 503 }));
   await toggle.click();
   await page.locator('#search').fill('达科他');
   await page.waitForFunction(() => document.querySelector('#search-status')
     .textContent.includes('暂时无法'));
-  await page.unroute('**/assets/search.json');
+  await page.unroute('**/assets/search-zh-CN.json');
   await page.locator('#search').fill('土拨鼠');
   await page.waitForFunction(() => document.querySelector('#results h2'));
   // The deliberately failed request is the only expected browser error.

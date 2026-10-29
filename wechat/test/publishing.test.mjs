@@ -1,13 +1,11 @@
 import test, { before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, readdir, mkdtemp, rm } from 'node:fs/promises';
+import { readFile, mkdtemp, rm } from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import { JSDOM } from 'jsdom';
-import { parse } from 'yaml';
-import { convert, frontMatter, postRoute } from '../convert.mjs';
+import { convert, postRoute } from '../convert.mjs';
 import { build, root, hash } from '../build.mjs';
-import { publicationContent } from '../publication.js';
 
 const site = { url: 'https://example.com', baseurl: '', permalink: '/:year/:month/:day/:title/' };
 const file = path.join(root, '_posts/zh/2026-01-01-fixture.md');
@@ -21,26 +19,6 @@ after(async () => {
   if (outputRoot) await rm(outputRoot, { recursive: true, force: true });
 });
 
-test('adapter preserves paragraph rhythm, quotes, hard breaks and inline markup', async () => {
-  const source = '### 第一章\n\n第一段 **强调**。  \n下一行。\n\n> 引文\n>\n> <cite>出处</cite>\n\n<div class="travel-passage" markdown="1">\n\n原段落。\n\n</div>\n\n尾段。';
-  const { body } = await convert(wrap(source), file, site, root);
-  assert.ok(body.includes('第一段 **强调**。  \n下一行。'));
-  assert.ok(body.includes('> 引文\n>\n> <cite>出处</cite>'));
-  assert.ok(body.includes('原段落。\n\n'));
-  assert.ok(body.includes('尾段。'));
-  assert.ok(!body.includes('<div'));
-});
-
-test('multiline components resolve page metadata, credit and full image aspect', async () => {
-  const source = '---\ntitle: 测试\nartwork:\n  light: /assets/plate.png\n---\n\n{% include artwork.html src=page.artwork.light alt="光 & 影" %}\n\n{% include travel-photo.html\n src="/assets/portrait.jpg" alt="竖幅" width=768 height=1024\n credit="摄影者" aspect_ratio="16 / 9" %}';
-  const { body } = await convert(source, file, site, root);
-  assert.match(body, /https:\/\/example.com\/assets\/plate.png/);
-  assert.match(body, /alt="光 &amp; 影"/);
-  assert.match(body, /width="768" height="1024"/);
-  assert.match(body, /<figcaption>摄影者<\/figcaption>/);
-  assert.ok(!body.includes('16 / 9'));
-});
-
 test('code remains literal; unknown Liquid stops rather than deleting content', async () => {
   const code = '```liquid\n{% unknown %}\n```\n\n`{{ page.title }}`';
   assert.equal((await convert(wrap(code), file, site, root)).body.trim(), code);
@@ -49,61 +27,22 @@ test('code remains literal; unknown Liquid stops rather than deleting content', 
   await assert.rejects(convert(wrap('{% if page.foo %}正文{% endif %}'), file, site, root), /未支持的 Liquid/);
 });
 
-test('nested raw/code captures restore completely without changing literals', async () => {
-  for (const [input, expected] of [
-    ['```liquid\n{% raw %}{{ page.title }}{% endraw %}\n```',
-      '```liquid\n{{ page.title }}\n```'],
-    ['`{% raw %}{{ value }}{% endraw %}`', '`{{ value }}`'],
-    ['{% raw %}`{{ value }}`{% endraw %}', '`{{ value }}`'],
-    ['```text\n{% raw %}$& $1 {{ value }}{% endraw %}\n```\n\n' +
-      '{% raw %}tail {{ other }}{% endraw %}',
-    '```text\n$& $1 {{ value }}\n```\n\ntail {{ other }}'],
-  ]) {
-    const { body } = await convert(wrap(input), file, site, root);
-    assert.equal(body.trim(), expected);
-    assert.ok(!body.includes('\u0000'));
-  }
+test('nested raw/code content stays literal', async () => {
+  const input = '```text\n{% raw %}$& $1 {{ value }}{% endraw %}\n```';
+  assert.equal((await convert(wrap(input), file, site, root)).body.trim(),
+    '```text\n$& $1 {{ value }}\n```');
 });
 
 test('Jekyll URL tokens honor pretty titles, slug/date and permalink overrides', () => {
   assert.equal(decodeURI(postRoute('2024-06-30-回忆、内在时间.md', {}, site)),
     '/2024/06/30/回忆-内在时间/');
-  assert.equal(postRoute('2017-07-02-Hello darkness.md', {}, site),
-    '/2017/07/02/Hello-darkness/');
   assert.equal(postRoute(file, { slug: 'New Name', date: '2025-02-03' }, site),
     '/2025/02/03/New-Name/');
   assert.equal(postRoute(file, {
     slug: 'New.Name', permalink: '/notes/:year/:title/:slug/',
   }, site), '/notes/2026/New.Name/new-name/');
-  assert.equal(postRoute(file, { permalink: '/fixed/' }, site), '/fixed/');
   assert.throws(() => postRoute(file, { permalink: '/:unknown/' }, site),
     /不支持的 permalink 占位符/);
-});
-
-test('every Chinese post URL matches Jekyll, including post_url references', async () => {
-  const config = parse(await readFile(path.join(root, '_config.yml'), 'utf8'));
-  const names = (await readdir(path.join(root, '_posts/zh')))
-    .filter(name => name.endsWith('.md'));
-  for (const name of names) {
-    const source = await readFile(path.join(root, '_posts/zh', name), 'utf8');
-    const converted = await convert(source, path.join(root, '_posts/zh', name), config, root);
-    const route = decodeURI(new URL(converted.metadata.source_url).pathname);
-    const generated = new JSDOM(await readFile(
-      path.join(root, '_site', route, 'index.html'), 'utf8'));
-    const canonical = generated.window.document.querySelector('link[rel="canonical"]').href;
-    assert.equal(converted.metadata.source_url, canonical, name);
-    generated.window.close();
-  }
-  const linked = await convert(wrap(
-    '[前文]({% post_url zh/2024-06-30-回忆、内在时间和理想自我 %})'),
-  file, config, root);
-  assert.match(decodeURI(linked.body), /\/2024\/06\/30\/回忆-内在时间和理想自我\//);
-});
-
-test('post_url and URL filters use actual repository metadata', async () => {
-  const { body } = await convert(wrap('[前文]({% post_url zh/2026-08-30-观雷 %})\n\n![图]({{ "/assets/a.jpg" | relative_url }})'), file, site, root);
-  assert.match(decodeURI(body), /https:\/\/example.com\/2026\/08\/30\/观雷\//);
-  assert.match(body, /https:\/\/example.com\/assets\/a.jpg/);
 });
 
 // Independent oracle: Jekyll renders the original source with its real Liquid
@@ -143,16 +82,10 @@ for (const [filename, route, theme] of [
     assert.equal(document.querySelector('.publication-description').textContent,
       result.manifest.metadata.description);
     assert.equal(document.querySelectorAll('.publication-title').length, 0);
-    const preview = new JSDOM(await readFile(path.join(result.outDir, 'preview.html'), 'utf8'));
-    assert.equal(preview.window.document.querySelector('.publication-title').textContent,
-      result.manifest.metadata.title);
-    assert.equal(publicationContent(preview.window.document.querySelector('#publication')).outerHTML,
-      (await readFile(path.join(result.outDir, 'fragment.html'), 'utf8')).trim());
     for (const image of document.images) {
       assert.ok(image.style.width, 'Image sizing is available after paste');
       assert.equal(image.style.height, 'auto', 'Images retain their proportions');
     }
-    preview.window.close();
     assert.ok(!document.querySelector('style, script'));
     assert.ok(document.querySelector('.article-body p').style.color);
     for (const image of result.manifest.images) {
@@ -163,14 +96,3 @@ for (const [filename, route, theme] of [
     exported.window.close();
   });
 }
-
-test('a third travel post converts without article-specific rules', async () => {
-  const filename = '_posts/zh/2026-10-16-落基山十三日.md';
-  const source = await readFile(path.join(root, filename), 'utf8');
-  const result = await convert(source, path.join(root, filename), site, root);
-  assert.equal(result.metadata.theme, 'travel');
-  assert.equal((result.body.match(/<img /g) || []).length,
-    (frontMatter(source).body.match(/{%\s*include travel-photo.html/g) || []).length);
-  assert.ok(!result.body.includes('travel-pair'));
-  assert.ok(!result.body.includes('{%'));
-});

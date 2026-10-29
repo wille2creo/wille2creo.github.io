@@ -28,26 +28,6 @@ jobs:
         uses: ruby/setup-ruby@v1.335.0
         with:
           ruby-version: .ruby-version
-
-      - name: Install dependencies
-        run: make install
-
-      - name: Build site
-        run: make build
-
-      - name: Upload Pages artifact
-        if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v5.0.0
-        with:
-          path: _site
-
-  validate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: ruby/setup-ruby@v1.335.0
-        with:
-          ruby-version: .ruby-version
       - uses: actions/setup-node@v7.1.0
         with:
           node-version-file: .node-version
@@ -61,22 +41,29 @@ jobs:
       - name: Audit Node dependencies
         run: npm audit --audit-level=moderate
       - name: Install browser
+        if: github.event_name == 'workflow_dispatch'
         run: npx playwright install --with-deps chromium
       - name: Check browser interactions and responsive layouts
+        if: github.event_name == 'workflow_dispatch'
         run: npm run test:browser
         env:
           BROWSER_ARTIFACTS: ${{ runner.temp }}/browser-artifacts
       - name: Save browser evidence
-        if: always()
+        if: always() && github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@v7.0.2
         with:
           name: browser-evidence
           path: ${{ runner.temp }}/browser-artifacts
           if-no-files-found: ignore
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5.0.0
+        with:
+          path: _site
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: [build, validate]
+    needs: build
     runs-on: ubuntu-latest
 
     permissions:

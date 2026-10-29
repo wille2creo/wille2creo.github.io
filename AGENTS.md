@@ -43,7 +43,8 @@ Before submitting changes, run the checks that match your edit:
 Generated-site contracts live in `test/`, publisher regressions in
 `wechat/test/`, and browser checks in `test/browser/`. Keep screenshots and
 temporary artifacts outside the repository; `BROWSER_ARTIFACTS` sets their
-destination. CI gates deployment on the Jekyll build and validation jobs.
+destination. CI builds once and gates deployment on site and publisher checks;
+manual workflow runs also exercise Chromium.
 
 ## Commits
 

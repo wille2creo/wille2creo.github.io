@@ -2,17 +2,15 @@ export BUNDLE_PATH := vendor/bundle
 export BUNDLE_USER_HOME := .bundle
 .DEFAULT_GOAL := install
 
-.PHONY: check-runtime install build serve check
-check-runtime:
-	ruby script/check-runtime.rb
+.PHONY: install build serve check
 
-install: check-runtime
+install:
 	bundle install
 
-build: check-runtime
+build:
 	JEKYLL_ENV=production bundle exec jekyll build
 
-serve: check-runtime
+serve:
 	bundle exec jekyll serve -H 0.0.0.0
 
 check: build

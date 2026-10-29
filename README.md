@@ -46,8 +46,7 @@ make serve
 Build for production with `make build`. Local development and GitHub Actions
 use these same commands; Node.js and npm are not required.
 
-Make honors the Ruby on your `PATH` and checks it against `.ruby-version`
-before installing, building, or serving. Bundler enforces the same version.
+Make honors the Ruby on your `PATH`; Bundler checks it against `.ruby-version`.
 Select that interpreter with your preferred version manager; the repository
 does not override your machine's Ruby installation.
 
@@ -71,16 +70,16 @@ when set. Publisher checks and browser checks each generate their own exports
 in temporary directories and leave the author's `wechat/out/` bundles intact.
 Run `make build` before browser checks after changing source files.
 
-CI keeps the Jekyll-only build separate from validation with Ruby, Node, and
-Chromium. Deployment requires both jobs to pass. Tests cover search, navigation,
-contents tracking, the native image dialog, language switching, themes,
-responsive layouts, and publisher clipboard behavior. Dependency updates are
-checked weekly through Dependabot.
+CI builds once and runs the site and publisher checks before deployment.
+Manual workflow runs also run Chromium; use `npm run test:browser` locally for
+interaction or layout changes. The browser smoke suite covers desktop, phone
+and landscape layouts, search, navigation, contents, the image viewer, themes,
+and publisher clipboard behavior. Dependency updates are checked weekly through
+Dependabot.
 
-Checks follow publishing contracts: resolvable navigation and assets, metadata
-and discovery URLs, language isolation, faithful exports, and usable browser
-interactions across desktop and phone viewports. Screenshots support visual
-review; layout checks cover visibility, fit, and access to controls.
+Checks cover resolvable navigation and assets, canonical URLs, language isolation
+and faithful exports. Browser checks use representative reading and publishing
+flows; screenshots support visual review.
 
 The optional [WeChat publishing tool](wechat/README.md) adapts Chinese posts
 into local exports and previews. Exporting requires Node, but does not require

@@ -42,13 +42,6 @@ Regenerate a subset if its displayed text changes. For the Sanskrit seal,
 verify shaping of `बो`, `धि`, `स`, `त्त्व` and the complete word against
 the original, including conjuncts and vowel positioning.
 
-## Interface text
-
-Navigation, controls, pagination, and contents navigation use the system
-sans-serif stack. Reading and search text use system serif fonts. Language
-landing-page choices use the branding faces above. Interface text needs no
-font downloads, generated character ranges, or font-generation dependencies.
-
 ## Pinned sources
 
 Google Fonts sources share commit

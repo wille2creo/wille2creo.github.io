@@ -35,7 +35,7 @@ page. It does not require the same medium, palette, framing, or amount of
 empty space across essays. Do not turn the Dakota watercolor or any other
 successful example into a mandatory house style.
 
-## Types
+## Editorial vocabulary
 
 - `trace`: a small line, wash, plant form, or color fragment. Transparent SVG
   with theme-aware color is useful when appropriate.
@@ -48,7 +48,8 @@ successful example into a mandatory house style.
 - `gathered`: one photograph with one restrained drawn or graphic relation.
   Let the specific work determine the intervention, not a collage template.
 
-These are useful descriptions, not requirements to fill a catalogue.
+These describe editorial treatments, not a catalogue to fill. The home preview
+renderer frames `photo` previews; the other types preserve the full composition.
 
 ## Page and editions
 
@@ -101,18 +102,20 @@ The repository skill at
 to selection, production, integration, and rendered review. Keep aesthetic
 decisions in this document and reusable working guidance in the skill.
 
+## Asset conventions
+
+Use stable folders such as `assets/art/<essay-slug>/` and clear names such as
+`trace.svg`, `plate.light.webp`, and `plate.dark.webp`. Photos can remain in
+their normal folders. Preserve originals and distinguish generated
+interpretations from documentary sources. Add implementation when a real
+work needs it.
+
 ## Thunderstorm / 观雷
 
-The supplied original is preserved unchanged at
-`assets/art/thunderstorm/plate.png`. Both articles invoke `_includes/artwork.html`
-after the first paragraph of The Thunderstorm / 雷雨, once the mountain,
-valley, and storm have entered the text. The include receives the shared
-assets, their dimensions, and localized alt text.
-
-The artwork uses transparent pigment on the page's own background, with
-no rectangular paper field, caption, or filter. It follows the reading
-column on desktop and mobile, preserving its complete composition and
-soft edges without pushing the artwork offscreen.
+The original is `assets/art/thunderstorm/plate.png`. Both articles place the
+artwork after the first paragraph of The Thunderstorm / 雷雨, once the
+mountain, valley, and storm have entered the text. Transparent editions meet
+the page background without a paper field, caption, filter, or crop.
 
 `plate.light.png` is a generated background-extraction edit of the supplied
 original. `plate.dark.png` is a companion generated paint-value adaptation
@@ -120,21 +123,15 @@ for dark paper. They preserve the scene and composition, but generative
 editing may change grain, edges, and small details. These editions are
 not lossless exports from the original artwork.
 
-The article and home preview share `_includes/artwork-image.html`: one
-`picture` with an optional dark `source` and the light `img`.
-The existing theme control selects the source for explicit and system
-themes. Without site JavaScript, it follows the system preference. Both languages
-use the same editions and their own article alt text.
+The article and home preview share `_includes/artwork-image.html`; the home
+uses smaller `preview.light.webp` and `preview.dark.webp` editions. The include
+uses a `picture` with an optional dark source. Theme controls select explicit
+or system appearance; without JavaScript, it follows the system preference.
+Both languages use the same editions and localized article alt text.
 
-The target is a nearly boundary-free transition into the webpage in both
-modes. Evaluate the actual article, including soft outer edges, translucent
-washes, lightning, and living green. A layered-source transparent export
-would give better control and fidelity if one becomes available.
-
-For future assets, prefer a stable folder such as `assets/art/<essay-slug>/`
-and clear names such as `trace.svg`, `plate.light.webp`, and `plate.dark.webp`.
-Photos can remain in the normal photo folders. Add implementation only when
-a real work needs it.
+Review soft outer edges, translucent washes, lightning, and living green in
+both themes. A layered-source transparent export remains an optional fidelity
+improvement, not a scheduled implementation task.
 
 ## Home preview and chronology
 
@@ -200,9 +197,7 @@ then breaks into the page. Loose edges and diluted color simplify the
 photograph without rearranging the encounter or opening large gaps inside
 the animals. This composition belongs to this essay, not a template.
 
-The selected PNG was encoded as lossless WebP with its RGBA pixels verified
-unchanged. The generated source remains preserved separately; the web
-edition is 1,483,238 bytes. Genuine transparency exposes the page canvas,
-with no baked-in paper field. Rendered review at 1440 × 1000 and 390 × 844
-confirmed the same asset works in both themes without a filter or separate
-dark edition. Original photographs and the article body remain unchanged.
+The published WebP has genuine transparency and is shared by light and dark
+themes. Preserve its pigment edges and use the page canvas rather than a
+baked-in paper field. Keep documentary photographs in the article distinct
+from this home interpretation.

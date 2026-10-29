@@ -13,11 +13,10 @@ Feed readers consume `/feed.xml`; crawlers and link previews consume the
 sitemap, canonical URLs, and page metadata. Public article URLs and the
 Reading pages at `/zh/now/` and `/en/now/` stay stable as source files change.
 
-The author uses the WeChat CLI to turn Chinese posts into local exports and
-browser previews, then copies the result into the official editor. The
-publisher preserves article content, image order, credits, and public links.
-Its JavaScript modules are internal to this workflow; its supported commands
-and output files are described in [wechat/README.md](wechat/README.md).
+For local exports and previews for the official WeChat editor, use the
+[WeChat publishing guide](wechat/README.md). It owns publisher commands,
+output files, content-preservation rules, and manual publishing acceptance.
+For editorial images and home previews, use [ARTWORK.md](ARTWORK.md).
 
 ## Structure
 
@@ -43,14 +42,15 @@ make install
 make serve
 ```
 
-Build for production with `make build`. Local development and GitHub Actions
-use these same commands; Node.js and npm are not required.
+Build for production with `make build`. Building and serving require Ruby and
+Bundler. Validation and the optional WeChat publisher also require Node.js;
+GitHub Actions installs both runtimes.
 
 Make honors the Ruby on your `PATH`; Bundler checks it against `.ruby-version`.
 Select that interpreter with your preferred version manager; the repository
 does not override your machine's Ruby installation.
 
-## Validation and optional publishing tools
+## Validation
 
 Use the exact Node version in `.node-version`, matching CI,
 then install the locked development dependencies:
@@ -62,15 +62,26 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-`make check` builds once, checks browser-script syntax, audits generated local
+`make check` builds once, checks browser-script syntax, checks generated local
 links and language listings, and runs the WeChat publisher's regression tests.
-`npm test` is equivalent. Browser checks start their own loopback server against
+`npm test` is equivalent. Tests live in `test/` (site), `wechat/test/`
+(publisher), and `test/browser/` (Chromium).
+Browser checks start their own loopback server against
 the built site; screenshots go to a temporary directory, or `BROWSER_ARTIFACTS`
 when set. Publisher checks and browser checks each generate their own exports
 in temporary directories and leave the author's `wechat/out/` bundles intact.
 Run `make build` before browser checks after changing source files.
 
-CI builds once and runs the site and publisher checks before deployment.
+| Change | Validation |
+| --- | --- |
+| Documentation outside published pages | Affected links and `git diff --check` |
+| Posts, pages or configuration | `make build` |
+| Visuals, routes or browser interactions | `make check`, then `npm run test:browser`; inspect affected rendering |
+| Ruby dependencies | `make install`, then `make build` |
+| WeChat publisher | `npm run wechat:test`; browser checks for preview or clipboard changes |
+
+CI builds once and runs the site/publisher checks and Node dependency audit
+before deployment.
 Manual workflow runs also run Chromium; use `npm run test:browser` locally for
 interaction or layout changes. The browser smoke suite covers desktop, phone
 and landscape layouts, search, navigation, contents, the image viewer, themes,
@@ -81,12 +92,7 @@ Checks cover resolvable navigation and assets, canonical URLs, language isolatio
 and faithful exports. Browser checks use representative reading and publishing
 flows; screenshots support visual review.
 
-The optional [WeChat publishing tool](wechat/README.md) adapts Chinese posts
-into local exports and previews. Exporting requires Node, but does not require
-a Jekyll build or access to a publishing account. Its contract tests use Jekyll
-as an independent reference for routes and article content.
-
-## Notes
+## Architecture
 
 Templates and Sass modules are owned by this repository. The SEO include keeps
 titles, descriptions, canonical links, Open Graph metadata, publication dates,
@@ -159,5 +165,6 @@ master; `assets/favicon-16x16.svg` slightly enlarges and thickens the mark for
 16px. The ICO embeds the dedicated 16px PNG alongside 32px and 48px editions.
 Stylesheets, browser scripts, and icon links carry a build version so browsers
 refresh them together after deployment.
-Font subsets and their licenses are published; font provenance documentation is
-excluded from the site. There is no web app manifest or standalone app mode.
+Font subsets and their licenses are published; [font provenance and regeneration
+instructions](assets/fonts/README.md) are excluded from the site. There is no
+web app manifest or standalone app mode.

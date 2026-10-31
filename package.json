@@ -15,7 +15,7 @@
     "wechat:test": "make build && node --test wechat/test/*.test.mjs"
   },
   "devDependencies": {
-    "@css-inline/css-inline": "0.23.1",
+    "@css-inline/css-inline": "0.23.2",
     "@mathjax/src": "4.1.3",
     "jsdom": "30.1.3",
     "marked": "18.1.2",
